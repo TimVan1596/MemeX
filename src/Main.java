@@ -1,35 +1,42 @@
-package com.src;
+package src;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 
 import javax.swing.*;
 
 public class Main {
     private static void createAndShowGUI() {
-        JFrame frame = new JFrame("小明计算器");
+        JFrame frame = new JFrame("MemeX - 表情包生成器");
         frame.setLayout(new BorderLayout());
 //        总体使用BorderLayout，North是JTextField，
 //        Center是用JPanel，它里面是按钮，其layout是GridLayout。
 
-        JTextField showPanel = new JTextField("",20);
-        showPanel.setPreferredSize(new Dimension(0, 50));
-        frame.add(showPanel,BorderLayout.NORTH);
 
-        JPanel BtnPanel = new JPanel();
+        /*展示图片*/
+        JPanel imgPanel = new JPanel();
+        JLabel img = new JLabel("");
+        img.setIcon(new ImageIcon("meme1.jpg"));
+        //设置img标签的边距
+        //TODO 需要用SpringLayout给imgpanel一个margin
+        imgPanel.add(img);
+        imgPanel.setLayout(new FlowLayout());
+        /*end 展示图片*/
 
-        Integer ROWS_LEN = 4 , COLS_LEN = 4;
-        BtnPanel.setLayout(new GridLayout(ROWS_LEN,COLS_LEN));
+        /*文字编辑区*/
+        JPanel TextEditPanel = new JPanel();
+        TextEditPanel.setLayout(new BorderLayout());
 
-        String str[]={"7","8","9","-","4","5","6","+","1","2","3","*","0",".","=","/"};
-        for (int i = 0; i < ROWS_LEN; i++) {
-            for (int j = 0; j < COLS_LEN; j++) {
-                BtnPanel.add(new JButton(str[i*ROWS_LEN+j]));
-            }
-        }
-        BtnPanel.setPreferredSize(new Dimension(0, 180));
-        frame.add(BtnPanel);
+        /*用户输入表情包文字*/
+        JTextField tf = new JTextField(20);
+        TextEditPanel.add(tf,BorderLayout.CENTER);
+        /*生成按钮*/
+        JButton summit = new JButton("生成表情包！");
+        TextEditPanel.add(summit,BorderLayout.SOUTH);
+
+
+        frame.add(imgPanel, BorderLayout.NORTH);
+        frame.add(TextEditPanel, BorderLayout.SOUTH);
+        /*end文字编辑区*/
 
         frame.pack();
         //frame.setResizable(false);  加上即不能调整窗口大小
