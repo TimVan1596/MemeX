@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MemeX">
+    <output-path>$PROJECT_DIR$/out/artifacts/MemeX</output-path>
+    <root id="archive" name="MemeX.jar">
+      <element id="module-output" name="expression_package_generator" />
+    </root>
+  </artifact>
+</component>
