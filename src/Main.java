@@ -21,6 +21,9 @@ public class Main extends JPanel implements ActionListener {
     /*用户输入表情包文字*/
     JTextField tf;
 
+//  单个中文的字宽
+    static final  int word_width = 39;
+
 
     public Main() {
         super(new BorderLayout());
@@ -78,7 +81,6 @@ public class Main extends JPanel implements ActionListener {
             //1.jpg是你的 主图片的路径
             InputStream is = new FileInputStream("meme1.jpg");
 
-
             //通过JPEG图象流创建JPEG数据流解码器
             JPEGImageDecoder jpegDecoder = JPEGCodec.createJPEGDecoder(is);
             //解码当前JPEG数据流，返回BufferedImage对象
@@ -86,15 +88,21 @@ public class Main extends JPanel implements ActionListener {
             //得到画笔对象
             Graphics g = buffImg.getGraphics();
 
+            int imageWidth = buffImg.getWidth();
+            System.out.println(imageWidth);
+            int StrLenth = inputStr.length();
+
+
+
 
             //最后一个参数用来设置字体的大小
-            Font f = new Font("黑体",Font.PLAIN,35);
+            Font f = new Font("黑体",Font.BOLD,35);
             Color mycolor = Color.BLACK;//new Color(0, 0, 255);
             g.setColor(mycolor);
             g.setFont(f);
 
             //10,20 表示这段文字在图片上的位置(x,y) .第一个是你设置的内容。
-            g.drawString(inputStr,100,435);
+            g.drawString(inputStr,(imageWidth-word_width*StrLenth)/2,435);
 
             g.dispose();
 
@@ -119,6 +127,8 @@ public class Main extends JPanel implements ActionListener {
 
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
+
+            JOptionPane.showMessageDialog(null, "图片路径不存在", "错误", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } catch (ImageFormatException e) {
             // TODO Auto-generated catch block
