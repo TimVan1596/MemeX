@@ -1,18 +1,14 @@
 package src;
 
-import com.sun.image.codec.jpeg.ImageFormatException;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageDecoder;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 
@@ -21,8 +17,9 @@ public class Main extends JPanel implements ActionListener {
     /*用户输入表情包文字*/
     JTextField tf;
 
-//  单个中文的字宽
-    static final  int word_width = 39;
+    //单个中文的字宽
+    static final  int WORD_WIDTH = 39;
+    //
 
 
     public Main() {
@@ -72,56 +69,56 @@ public class Main extends JPanel implements ActionListener {
 //                JOptionPane.showMessageDialog(null,text, "QUESTION_MESSAGE", JOptionPane.QUESTION_MESSAGE);
                 exportImg(text);
                 break;
+                default:
         }
 
     }
 
     public  void exportImg(String inputStr){
         try {
-            //1.jpg是你的 主图片的路径
+            //读入表情包图片
             InputStream is = new FileInputStream("meme1.jpg");
-
-            //通过JPEG图象流创建JPEG数据流解码器
-            JPEGImageDecoder jpegDecoder = JPEGCodec.createJPEGDecoder(is);
-            //解码当前JPEG数据流，返回BufferedImage对象
-            BufferedImage buffImg = jpegDecoder.decodeAsBufferedImage();
+            //读入图片
+            BufferedImage buffImg = ImageIO.read(is);
             //得到画笔对象
             Graphics g = buffImg.getGraphics();
 
             int imageWidth = buffImg.getWidth();
             System.out.println(imageWidth);
-            int StrLenth = inputStr.length();
+            int strLenth = inputStr.length();
 
 
 
 
             //最后一个参数用来设置字体的大小
             Font f = new Font("黑体",Font.BOLD,35);
-            Color mycolor = Color.BLACK;//new Color(0, 0, 255);
+            //new Color(0, 0, 255);
+            Color mycolor = Color.BLACK;
             g.setColor(mycolor);
             g.setFont(f);
 
+
+          //  while ()
+
             //10,20 表示这段文字在图片上的位置(x,y) .第一个是你设置的内容。
-            g.drawString(inputStr,(imageWidth-word_width*StrLenth)/2,435);
+            g.drawString(inputStr,(imageWidth- WORD_WIDTH *strLenth)/2,435);
 
             g.dispose();
 
             //获取桌面路径
             FileSystemView fsv = FileSystemView.getFileSystemView();
-            File com=fsv.getHomeDirectory();    //这便是读取桌面路径的方法了
+            //这便是读取桌面路径的方法了
+            File com=fsv.getHomeDirectory();
             String path = com.getPath();
 
-            OutputStream os;
-            os = new FileOutputStream(path+"/新表情.jpg");
-            //创键编码器，用于编码内存中的图象数据。
-            JPEGImageEncoder en = JPEGCodec.createJPEGEncoder(os);
-            en.encode(buffImg);
+            OutputStream os = new FileOutputStream(path+"/新表情.jpg");
+            //将输出流写入图片中
+            ImageIO.write(buffImg, "jpg", os);
 
             is.close();
             os.close();
 
-        //    String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-         //   String path ="C:\\Users\\123\\IdeaProjects\\expression_package_generator\\union.jpg";
+
 
             Runtime.getRuntime().exec("cmd /c start explorer "+path);
 
@@ -129,9 +126,6 @@ public class Main extends JPanel implements ActionListener {
             // TODO Auto-generated catch block
 
             JOptionPane.showMessageDialog(null, "图片路径不存在", "错误", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        } catch (ImageFormatException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
