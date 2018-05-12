@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="expression_package_generator:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/expression_package_generator_jar</output-path>
+    <root id="archive" name="expression_package_generator.jar">
+      <element id="module-output" name="expression_package_generator" />
+    </root>
+  </artifact>
+</component>
