@@ -1,8 +1,6 @@
 package src;
 
 
-import javafx.stage.FileChooser;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,14 +25,51 @@ public class Main extends JPanel implements ActionListener {
      * WORD_HEIGHT 每行的行高
      * FIRST_ROW_Y  第一行文字的行高
      * openFile 用户选择的图片模板
-     * img 图片
+     * imgLabel 图片
      */
 
     static final int WORD_WIDTH = 39;
     static final int WORD_HEIGHT = 45;
+    static final int IMG_HEIGHT = 400;
+    static final int IMG_WIDTH = 500;
+
     JTextField tf;
     File openFile;
-    JLabel img;
+    JLabel imgLabel;
+
+    private ImageIcon scaleImg(ImageIcon image){
+        int imgWidth = image.getIconWidth();
+        int imgHeight = image.getIconHeight();
+        int conWidth = IMG_WIDTH;
+        int conHeight = IMG_HEIGHT;
+        int reImgWidth;
+        int reImgHeight;
+        System.out.println("imgWidth = "+imgWidth);
+        System.out.println("conHeight = "+conHeight);
+        if (imgWidth / imgHeight >= conWidth / conHeight) {
+            if (imgWidth > conWidth) {
+                reImgWidth = conWidth;
+                reImgHeight = imgHeight * reImgWidth / imgWidth;
+            } else {
+                reImgWidth = imgWidth;
+                reImgHeight = imgHeight;
+            }
+        } else {
+            if (imgWidth > conWidth) {
+                reImgHeight = conHeight;
+                reImgWidth = imgWidth * reImgHeight / imgHeight;
+            } else {
+                reImgWidth = imgWidth;
+                reImgHeight = imgHeight;
+            }
+        }
+
+        image=new ImageIcon(image.getImage().getScaledInstance(reImgWidth, reImgHeight, Image.SCALE_DEFAULT));
+
+        image=new ImageIcon(image.getImage().getScaledInstance(reImgWidth, reImgHeight, Image.SCALE_DEFAULT));
+
+        return image;
+    }
 
 
     public Main() {
@@ -46,24 +81,27 @@ public class Main extends JPanel implements ActionListener {
 
         /*点击更换模板按钮*/
         JButton changePic = new JButton("更换模板");
-        changePic.setFont(new Font("黑体",Font.BOLD,18));
+        changePic.setFont(new Font("黑体", Font.BOLD, 18));
         changePic.setPreferredSize(new Dimension(10, 30));
         changePic.setActionCommand("changePic");
         changePic.addActionListener(this);
 
         /*展示图片*/
-        img = new JLabel("");
+        imgLabel = new JLabel("");
         openFile = new File("pics/熊猫人不屑.jpg");
-        img.setIcon(new ImageIcon("pics/"+openFile.getName()));
-        img.setHorizontalAlignment(JLabel.CENTER);
-        img.setVerticalAlignment(JLabel.CENTER);
+        ImageIcon image = new ImageIcon("pics/" + openFile.getName());
+        //图片等比缩放函数
+        image = scaleImg(image);
+        imgLabel.setIcon(image);
+        imgLabel.setHorizontalAlignment(JLabel.CENTER);
+        imgLabel.setVerticalAlignment(JLabel.CENTER);
 
 
-        img.addMouseListener(new MouseListener() {
+        imgLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
 
-                JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir")+"/pics"));
+                JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir") + "/pics"));
                 //文件名过滤器
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
                         "请选择jpg格式图片", "jpg");
@@ -72,8 +110,10 @@ public class Main extends JPanel implements ActionListener {
 
                 fileChooser.showOpenDialog(null);
                 openFile = fileChooser.getSelectedFile();
-                if(openFile != null){
-                    img.setIcon(new ImageIcon(openFile.getAbsolutePath()));
+                if (openFile != null) {
+                    ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
+                    //图片等比缩放函数
+                    imgLabel.setIcon(scaleImg(image));
                 }
             }
 
@@ -99,11 +139,10 @@ public class Main extends JPanel implements ActionListener {
         });
 
 
-
         //设置img标签的边距
         //TODO 需要用SpringLayout给imgPanel一个margin
-        imgPanel.add(changePic,BorderLayout.NORTH);
-        imgPanel.add(img,BorderLayout.SOUTH);
+        imgPanel.add(changePic, BorderLayout.NORTH);
+        imgPanel.add(imgLabel, BorderLayout.SOUTH);
         /*end 展示图片*/
 
         /*文字编辑区*/
@@ -112,13 +151,13 @@ public class Main extends JPanel implements ActionListener {
 
         /*用户输入表情包文字*/
         tf = new JTextField(20);
-        tf.setFont(new Font("黑体",Font.BOLD,19));
+        tf.setFont(new Font("黑体", Font.BOLD, 19));
         tf.setPreferredSize(new Dimension(50, 60));
         tf.setHorizontalAlignment(JTextField.CENTER);
         textEditPanel.add(tf, BorderLayout.CENTER);
         /*生成按钮*/
         JButton submit = new JButton("生成表情包！");
-        submit.setFont(new Font("黑体",Font.BOLD,18));
+        submit.setFont(new Font("黑体", Font.BOLD, 18));
         submit.setPreferredSize(new Dimension(50, 60));
         submit.setActionCommand("submit");
         submit.addActionListener(this);
@@ -145,7 +184,7 @@ public class Main extends JPanel implements ActionListener {
                 exportImg(text);
                 break;
             case "changePic":
-                JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir")+"/pics"));
+                JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir") + "/pics"));
                 //文件名过滤器
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
                         "请选择jpg格式图片", "jpg");
@@ -154,9 +193,10 @@ public class Main extends JPanel implements ActionListener {
 
                 fileChooser.showOpenDialog(null);
                 openFile = fileChooser.getSelectedFile();
-                if(openFile != null){
-                    img.setIcon(new ImageIcon(openFile.getAbsolutePath()));
-                }
+                if (openFile != null) {
+                    ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
+                    //图片等比缩放函数
+                    imgLabel.setIcon(scaleImg(image));                }
                 break;
             default:
         }
@@ -176,10 +216,10 @@ public class Main extends JPanel implements ActionListener {
             //读入图片
             BufferedImage buffImg = ImageIO.read(is);
 
-            final int FIRST_ROW_Y = buffImg.getHeight()+WORD_HEIGHT-5;
+            final int FIRST_ROW_Y = buffImg.getHeight() + WORD_HEIGHT - 5;
             int imageWidth = buffImg.getWidth();
             //maxWordNums 每行最多多少字
-            final int maxWordNums = imageWidth/WORD_WIDTH;
+            final int maxWordNums = imageWidth / WORD_WIDTH;
             //输入的字符总长度
             int strLenth = inputStr.length();
             //将会有几行
@@ -187,25 +227,21 @@ public class Main extends JPanel implements ActionListener {
 
 
             //bufferedImage = 创建新的BufferedImage，高度随文字的行数改变
-            BufferedImage bufferedImage = new BufferedImage(buffImg.getWidth(),buffImg.getHeight()+rowCount*WORD_HEIGHT+15,BufferedImage.TYPE_INT_RGB);
+            BufferedImage bufferedImage = new BufferedImage(buffImg.getWidth(), buffImg.getHeight() + rowCount * WORD_HEIGHT + 15, BufferedImage.TYPE_INT_RGB);
             //将扩增的部分用矩形填充为白色（默认为黑色）
-            bufferedImage.getGraphics().fillRect(0,0,bufferedImage.getWidth(),bufferedImage.getHeight());
+            bufferedImage.getGraphics().fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
             bufferedImage.getGraphics().setColor(Color.white);
             bufferedImage.getGraphics().dispose();
 
-            bufferedImage.getGraphics().drawImage(buffImg,0,0,buffImg.getWidth(),buffImg.getHeight(),null);
+            bufferedImage.getGraphics().drawImage(buffImg, 0, 0, buffImg.getWidth(), buffImg.getHeight(), null);
 
             //得到画笔对象
             Graphics graphics = bufferedImage.getGraphics();
 
 
-
-
             //最后一个参数用来设置字体的大小
             graphics.setColor(Color.BLACK);
             graphics.setFont(new Font("黑体", Font.BOLD, 35));
-
-
 
 
             for (int i = 1; i <= rowCount; ++i) {
@@ -219,12 +255,12 @@ public class Main extends JPanel implements ActionListener {
                 String everyRowStr = "";
                 StringBuffer stringBuffer = new StringBuffer();
                 //判断是否是最后一行
-                int finish = i!=rowCount?(i)*maxWordNums:inputStr.length();
+                int finish = i != rowCount ? (i) * maxWordNums : inputStr.length();
 
-                for(int j=(i-1)*maxWordNums ; j<finish; j++){
+                for (int j = (i - 1) * maxWordNums; j < finish; j++) {
                     stringBuffer.append(inputStr.charAt(j));
                 }
-                everyRowStr=stringBuffer.toString();
+                everyRowStr = stringBuffer.toString();
                 x = (imageWidth - WORD_WIDTH * (everyRowStr.length())) / 2;
                 y = FIRST_ROW_Y + (i - 1) * WORD_HEIGHT;
 
