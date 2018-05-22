@@ -1,37 +1,35 @@
-# 表情包生成器
+# MemeX/表情包生成器
 
-#### 项目介绍
-{**Java课上的课堂项目}
+### Project Introduction/项目介绍
+
+输入文字，输出表情图片。
+另外，这是我的Java课的课堂作业  
+
+Input text and output emoticons(Meme Pics).
+ In addition, this is a class assignment for my Java class. 
 
 #### 软件架构
-软件架构说明
+Java Swing  
+in IntelliJ IDEA 2017.3.4 
 
 
 #### 安装教程
-
-1. xxxx
-2. xxxx
-3. xxxx
+打开  
+Just Open it 
 
 #### 使用说明
+解压后打开MemeX.jar 即可运行
+生成的表情包保存在桌面，“新表情.jpg”  
 
-1. xxxx
-2. xxxx
-3. xxxx
+Open the MemeX.jar after decompression to run
+The generated facial meme picture is saved on the desktop, "新表情.jpg"
+
+![使用教程](https://gitee.com/uploads/images/2018/0522/154533_c8ac7769_1464254.jpeg "TIM图片20180522154436.jpg")
 
 #### 参与贡献
-
-1. Fork 本项目
-2. 新建 Feat_xxx 分支
-3. 提交代码
-4. 新建 Pull Request
+TimVan
 
 
-#### 码云特技
+#### 本项目首发于码云/Thanks,Gitee
+我的码云博客 [gitee.com/TimVan](https://gitee.com/TimVan)
 
-1. 使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2. 码云官方博客 [blog.gitee.com](https://blog.gitee.com)
-3. 你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4. [GVP](https://gitee.com/explore) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5. 码云官方提供的使用手册 [http://git.mydoc.io/](http://git.mydoc.io/)
-6. 码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
