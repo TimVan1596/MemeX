@@ -1,10 +1,11 @@
 # MemeX/表情包生成器
 
 ### Project Introduction/项目介绍
-
+一个表情包生成器  
 输入文字，输出表情图片。
 另外，这是我的Java课的课堂作业  
 
+Meme Generator  
 Input text and output emoticons(Meme Pics).
  In addition, this is a class assignment for my Java class. 
 
