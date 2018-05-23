@@ -1,6 +1,5 @@
 package src;
 
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +11,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
-
 
 /**
  * @author TimVan
@@ -37,15 +35,19 @@ public class Main extends JPanel implements ActionListener {
     File openFile;
     JLabel imgLabel;
 
+    /**
+     * 暂时弃用
+     * */
     private ImageIcon scaleImg(ImageIcon image){
         int imgWidth = image.getIconWidth();
         int imgHeight = image.getIconHeight();
+        System.out.println("imgWidth = "+imgWidth);
+        System.out.println("imgHeight = "+imgHeight);
         int conWidth = IMG_WIDTH;
         int conHeight = IMG_HEIGHT;
         int reImgWidth;
         int reImgHeight;
-        System.out.println("imgWidth = "+imgWidth);
-        System.out.println("conHeight = "+conHeight);
+
         if (imgWidth / imgHeight >= conWidth / conHeight) {
             if (imgWidth > conWidth) {
                 reImgWidth = conWidth;
@@ -63,8 +65,6 @@ public class Main extends JPanel implements ActionListener {
                 reImgHeight = imgHeight;
             }
         }
-
-        image=new ImageIcon(image.getImage().getScaledInstance(reImgWidth, reImgHeight, Image.SCALE_DEFAULT));
 
         image=new ImageIcon(image.getImage().getScaledInstance(reImgWidth, reImgHeight, Image.SCALE_DEFAULT));
 
@@ -88,10 +88,10 @@ public class Main extends JPanel implements ActionListener {
 
         /*展示图片*/
         imgLabel = new JLabel("");
-        openFile = new File("pics/熊猫人不屑.jpg");
+        openFile = new File("src/熊猫人不屑.jpg");
         ImageIcon image = new ImageIcon("pics/" + openFile.getName());
         //图片等比缩放函数
-        image = scaleImg(image);
+        image=new ImageIcon(image.getImage().getScaledInstance(IMG_WIDTH, IMG_HEIGHT, Image.SCALE_DEFAULT));
         imgLabel.setIcon(image);
         imgLabel.setHorizontalAlignment(JLabel.CENTER);
         imgLabel.setVerticalAlignment(JLabel.CENTER);
@@ -100,7 +100,6 @@ public class Main extends JPanel implements ActionListener {
         imgLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
                 JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir") + "/pics"));
                 //文件名过滤器
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -113,7 +112,8 @@ public class Main extends JPanel implements ActionListener {
                 if (openFile != null) {
                     ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
                     //图片等比缩放函数
-                    imgLabel.setIcon(scaleImg(image));
+                    image=new ImageIcon(image.getImage().getScaledInstance(IMG_WIDTH, IMG_HEIGHT, Image.SCALE_DEFAULT));
+                    imgLabel.setIcon(image);
                 }
             }
 
@@ -167,15 +167,13 @@ public class Main extends JPanel implements ActionListener {
 
         this.add(imgPanel, BorderLayout.NORTH);
         this.add(textEditPanel, BorderLayout.SOUTH);
-
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String Command = e.getActionCommand();
+        String command = e.getActionCommand();
 
-        switch (Command) {
+        switch (command) {
 //            生成表情包
             case "submit":
                 String text = tf.getText();
@@ -196,7 +194,8 @@ public class Main extends JPanel implements ActionListener {
                 if (openFile != null) {
                     ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
                     //图片等比缩放函数
-                    imgLabel.setIcon(scaleImg(image));                }
+                    image=new ImageIcon(image.getImage().getScaledInstance(IMG_WIDTH, IMG_HEIGHT, Image.SCALE_DEFAULT));
+                    imgLabel.setIcon(image);                }
                 break;
             default:
         }
@@ -208,6 +207,7 @@ public class Main extends JPanel implements ActionListener {
     //你到底是要卖一辈子糖水还是要跟我一起改变世界
     //你到底是要卖一辈子糖水还是要跟我一起改变世界。不，我只想卖可口可乐
 
+    @SuppressWarnings("AlibabaLowerCamelCaseVariableNaming")
     public void exportImg(String inputStr) {
         try {
             //读入表情包图片
@@ -300,7 +300,9 @@ public class Main extends JPanel implements ActionListener {
     }
 
 
-    //  创建GUI
+    /**
+     *  创建GUI
+     */
     private static void createAndShowGUI() {
         //Create and set up the window.
         JFrame frame = new JFrame("MemeX - 表情包生成器 v0.2");
@@ -311,9 +313,16 @@ public class Main extends JPanel implements ActionListener {
         newContentPane.setOpaque(true);
         frame.setContentPane(newContentPane);
 
+        //使用Toolkit设置图标
+        Toolkit tk=Toolkit.getDefaultToolkit();
+        Image image=tk.createImage("src/icon.jpg");
+        frame.setIconImage(image);
+
         //Display the window.
         frame.pack();
         frame.setVisible(true);
+        //窗口在屏幕中间显示
+        frame.setLocationRelativeTo(null);
     }
 
     public static void main(String[] args) {
