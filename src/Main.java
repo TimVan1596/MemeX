@@ -72,6 +72,7 @@ public class Main extends JPanel implements ActionListener {
     }
 
 
+
     public Main() {
         super(new BorderLayout());
         /*图片模块*/
@@ -100,22 +101,12 @@ public class Main extends JPanel implements ActionListener {
         imgLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir") + "/pics"));
-                //文件名过滤器
-                FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                        "请选择jpg格式图片", "jpg");
-                //给文件选择器加入文件过滤器
-                fileChooser.setFileFilter(filter);
-
-                fileChooser.showOpenDialog(null);
-                openFile = fileChooser.getSelectedFile();
-                if (openFile != null) {
-                    ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
-                    //图片等比缩放函数
-                    image=new ImageIcon(image.getImage().getScaledInstance(IMG_WIDTH, IMG_HEIGHT, Image.SCALE_DEFAULT));
-                    imgLabel.setIcon(image);
-                }
+//                JFrame frame = new ImageViewerFrame();
+//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//                frame.setVisible(true);
             }
+
+
 
             @Override
             public void mousePressed(MouseEvent e) {
