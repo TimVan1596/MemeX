@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -26,52 +27,14 @@ public class Main extends JPanel implements ActionListener {
      * imgLabel 图片
      */
 
-    static final int WORD_WIDTH = 39;
-    static final int WORD_HEIGHT = 45;
-    static final int IMG_HEIGHT = 400;
-    static final int IMG_WIDTH = 500;
+    private static final int WORD_WIDTH = 39;
+    private static final int WORD_HEIGHT = 45;
+    private static final int IMG_HEIGHT = 400;
+    private static final int IMG_WIDTH = 500;
 
     JTextField tf;
     File openFile;
     JLabel imgLabel;
-
-    /**
-     * 暂时弃用
-     * */
-    private ImageIcon scaleImg(ImageIcon image){
-        int imgWidth = image.getIconWidth();
-        int imgHeight = image.getIconHeight();
-        System.out.println("imgWidth = "+imgWidth);
-        System.out.println("imgHeight = "+imgHeight);
-        int conWidth = IMG_WIDTH;
-        int conHeight = IMG_HEIGHT;
-        int reImgWidth;
-        int reImgHeight;
-
-        if (imgWidth / imgHeight >= conWidth / conHeight) {
-            if (imgWidth > conWidth) {
-                reImgWidth = conWidth;
-                reImgHeight = imgHeight * reImgWidth / imgWidth;
-            } else {
-                reImgWidth = imgWidth;
-                reImgHeight = imgHeight;
-            }
-        } else {
-            if (imgWidth > conWidth) {
-                reImgHeight = conHeight;
-                reImgWidth = imgWidth * reImgHeight / imgHeight;
-            } else {
-                reImgWidth = imgWidth;
-                reImgHeight = imgHeight;
-            }
-        }
-
-        image=new ImageIcon(image.getImage().getScaledInstance(reImgWidth, reImgHeight, Image.SCALE_DEFAULT));
-
-        return image;
-    }
-
-
 
     public Main() {
         super(new BorderLayout());
@@ -92,7 +55,11 @@ public class Main extends JPanel implements ActionListener {
         openFile = new File("src/熊猫人不屑.jpg");
         ImageIcon image = new ImageIcon("pics/" + openFile.getName());
         //图片等比缩放函数
-        image=new ImageIcon(image.getImage().getScaledInstance(IMG_WIDTH, IMG_HEIGHT, Image.SCALE_DEFAULT));
+        Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
+
+        image=new ImageIcon(image.getImage().getScaledInstance(
+                imgWidthAndHeight.get("width"), imgWidthAndHeight.get("height"),
+                Image.SCALE_DEFAULT));
         imgLabel.setIcon(image);
         imgLabel.setHorizontalAlignment(JLabel.CENTER);
         imgLabel.setVerticalAlignment(JLabel.CENTER);
@@ -185,7 +152,11 @@ public class Main extends JPanel implements ActionListener {
                 if (openFile != null) {
                     ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
                     //图片等比缩放函数
-                    image=new ImageIcon(image.getImage().getScaledInstance(IMG_WIDTH, IMG_HEIGHT, Image.SCALE_DEFAULT));
+                    Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
+
+                    image=new ImageIcon(image.getImage().getScaledInstance(
+                            imgWidthAndHeight.get("width"), imgWidthAndHeight.get("height"),
+                            Image.SCALE_DEFAULT));
                     imgLabel.setIcon(image);                }
                 break;
             default:
@@ -296,7 +267,7 @@ public class Main extends JPanel implements ActionListener {
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("MemeX - 表情包生成器 v0.2");
+        JFrame frame = new JFrame("MemeX - 表情包生成器 v0.3");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
