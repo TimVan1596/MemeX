@@ -1,47 +1,198 @@
 package src;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *@author TimVan
- *ImageProcess 自用图像处理类
+ * @author TimVan
+ * ImageProcess 自用图像处理类
  */
 public class ImageProcess {
+
+    /**
+     * 判断是linux系统还是其他系统
+     * 如果是Linux系统，返回true，否则返回false
+     */
+    public static boolean isLinux() {
+        return System.getProperty("os.name").toLowerCase().contains("linux");
+    }
+
 
     /**
      * scaleImg（）； 图像缩放方法,将图片缩放到适合控件的大小
      * ImageIcon image为显示的图片
      * int conWidth,int conHeight 分别是图片的长和宽
      */
-    public static Map<String, Integer> scaleImage(ImageIcon image,double conWidth,double conHeight){
+    public static Map<String, Integer> scaleImage(ImageIcon image, double conWidth, double conHeight) {
 
-            Map<String, Integer> imgWidthAndHeight = new HashMap<String, Integer>();
+        Map<String, Integer> imgWidthAndHeight = new HashMap<String, Integer>();
 
-            double imgWidth = image.getIconWidth();
-            double imgHeight = image.getIconHeight();
-//            System.out.println("imgWidth = "+imgWidth);
-//            System.out.println("imgHeight = "+imgHeight);
-        double reImgWidth;
-        double reImgHeight;
+        //默认的边框间距
+        final double SMALL_SCALE = 0.95;
 
-        if(conWidth/imgWidth<=conHeight/imgHeight)
-        {
-            reImgWidth=imgWidth*(conWidth/imgWidth);
-            reImgHeight=imgWidth*(conWidth/imgWidth);
-        }else{
-            reImgWidth=imgWidth*(conHeight/imgHeight);
-            reImgHeight=imgWidth*(conHeight/imgHeight);
+        double imgWidth = image.getIconWidth();
+        double imgHeight = image.getIconHeight();
+        //原图的宽长比
+        double imgRatio = imgWidth/imgHeight;
+        //最终输出宽和长
+        double reImgWidth = 0;
+        double reImgHeight = 0;
+
+
+        //若原图的宽小于控件宽
+        if(imgWidth < conWidth){
+            if(imgHeight < conHeight){
+                reImgWidth = conWidth*SMALL_SCALE;
+                reImgHeight = reImgWidth/imgRatio;
+            }
+            else {
+                reImgHeight = conHeight*SMALL_SCALE;
+                reImgWidth = reImgHeight*imgRatio;
+            }
+        }
+        //若原图的宽大于控件宽
+        else {
+            if(imgHeight < conHeight){
+                reImgWidth = conWidth*SMALL_SCALE;
+                reImgHeight = reImgWidth/imgRatio;
+            }
+            //若原图的长宽同时大于控件的长宽，最复杂的情况
+            else {
+                //控件的长比宽大
+                double conRatio = conWidth/conHeight;
+
+                if (imgRatio < conRatio){
+                    reImgHeight = conHeight*SMALL_SCALE;
+                    reImgWidth = reImgHeight*imgRatio;
+                }
+                else {
+                    reImgWidth = conWidth*SMALL_SCALE;
+                    reImgHeight = reImgWidth/imgRatio;
+                }
+            }
         }
 
-//        if (imgWidth < conWidth && imgHeight < conHeight){
-//
-//        }
 
-            imgWidthAndHeight.put("width",(int)reImgWidth);
-            imgWidthAndHeight.put("height",(int)reImgHeight);
 
-            return imgWidthAndHeight;
+
+        imgWidthAndHeight.put("width", (int) reImgWidth);
+        imgWidthAndHeight.put("height", (int) reImgHeight);
+
+        return imgWidthAndHeight;
+    }
+
+
+    @SuppressWarnings("AlibabaLowerCamelCaseVariableNaming")
+    /** 将传入的字符串重绘图像，并输出图片文件
+     * 返回图片文件的路径，返回“0”为错误
+     * */
+    public static String drawImg(String inputStr , int WORD_WIDTH , int WORD_HEIGHT ,File openFile) {
+        String newMemePath = "0";
+        try {
+            //读入表情包图片
+            InputStream is = new FileInputStream(openFile.getAbsolutePath());
+            System.out.println(openFile.getName());
+            //读入图片
+            BufferedImage buffImg = ImageIO.read(is);
+
+            final int FIRST_ROW_Y = buffImg.getHeight() + WORD_HEIGHT - 5;
+            int imageWidth = buffImg.getWidth();
+            //maxWordNums 每行最多多少字
+            final int maxWordNums = imageWidth / WORD_WIDTH;
+            //输入的字符总长度
+            int strLenth = inputStr.length();
+            //将会有几行
+            int rowCount = strLenth / maxWordNums + 1;
+
+
+            //bufferedImage = 创建新的BufferedImage，高度随文字的行数改变
+            BufferedImage bufferedImage = new BufferedImage(buffImg.getWidth(), buffImg.getHeight() + rowCount * WORD_HEIGHT + 15, BufferedImage.TYPE_INT_RGB);
+            //将扩增的部分用矩形填充为白色（默认为黑色）
+            bufferedImage.getGraphics().fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
+            bufferedImage.getGraphics().setColor(Color.white);
+            bufferedImage.getGraphics().dispose();
+
+            bufferedImage.getGraphics().drawImage(buffImg, 0, 0, buffImg.getWidth(), buffImg.getHeight(), null);
+
+            //得到画笔对象
+            Graphics graphics = bufferedImage.getGraphics();
+
+
+            //最后一个参数用来设置字体的大小
+            graphics.setColor(Color.BLACK);
+            graphics.setFont(new Font("黑体", Font.BOLD, 35));
+
+
+            for (int i = 1; i <= rowCount; ++i) {
+                /**
+                 *  xy为坐标
+                 *  everyRowStr为每一行的字符串
+                 *  stringBuffer作为缓存输入，把总字符串切割
+                 *  finish作为每行切割的尾序号
+                 * */
+                int x = 0, y = 0;
+                String everyRowStr = "";
+                StringBuffer stringBuffer = new StringBuffer();
+                //判断是否是最后一行
+                int finish = i != rowCount ? (i) * maxWordNums : inputStr.length();
+
+                for (int j = (i - 1) * maxWordNums; j < finish; j++) {
+                    stringBuffer.append(inputStr.charAt(j));
+                }
+                everyRowStr = stringBuffer.toString();
+                x = (imageWidth - WORD_WIDTH * (everyRowStr.length())) / 2;
+                y = FIRST_ROW_Y + (i - 1) * WORD_HEIGHT;
+
+                //绘制文字
+                graphics.drawString(everyRowStr, x, y);
+            }
+
+
+            graphics.dispose();
+
+            //获取桌面路径
+            FileSystemView fsv = FileSystemView.getFileSystemView();
+            //读取桌面路径
+            File com = fsv.getHomeDirectory();
+            String path = com.getPath();
+            //更改最终返回的表情路径
+            newMemePath = path + "/新表情.jpg";
+
+            OutputStream os = new FileOutputStream(newMemePath);
+            //将输出流写入图片中
+            ImageIO.write(bufferedImage, "jpg", os);
+
+            is.close();
+            os.close();
+
+            //打开产生图片的文件夹，判断是否是Linux
+            if (isLinux() == true) {
+                Runtime.getRuntime().exec("sh nautilus " + path);
+            }
+            else{
+                Runtime.getRuntime().exec("cmd /c start explorer " + path);
+            }
+
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+
+            JOptionPane.showMessageDialog(null, "图片路径不存在", "错误", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "图片路径不存在", "错误", JOptionPane.ERROR_MESSAGE);
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        finally {
+            return newMemePath;
+        }
+
+    }
 }

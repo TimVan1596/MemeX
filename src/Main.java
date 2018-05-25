@@ -5,13 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Map;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileSystemView;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * @author TimVan
@@ -19,7 +19,7 @@ import javax.swing.filechooser.FileSystemView;
 public class Main extends JPanel implements ActionListener {
 
     /**
-     * tf 用户输入的表情包文字
+     * textPane 用户输入的表情包文字
      * WORD_WIDTH 单个中文的字宽
      * WORD_HEIGHT 每行的行高
      * FIRST_ROW_Y  第一行文字的行高
@@ -30,9 +30,12 @@ public class Main extends JPanel implements ActionListener {
     private static final int WORD_WIDTH = 39;
     private static final int WORD_HEIGHT = 45;
     private static final int IMG_HEIGHT = 400;
-    private static final int IMG_WIDTH = 500;
+    private static final int IMG_WIDTH = 400;
 
-    JTextField tf;
+    int scaleWidth = 0;
+    int scaleHeight = 0;
+
+    JTextPane textPane;
     File openFile;
     JLabel imgLabel;
 
@@ -54,12 +57,11 @@ public class Main extends JPanel implements ActionListener {
         imgLabel = new JLabel("");
         openFile = new File("src/熊猫人不屑.jpg");
         ImageIcon image = new ImageIcon("pics/" + openFile.getName());
-        //图片等比缩放函数
-        Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
-
+        scaleWidth = (int)(IMG_WIDTH*1.2);;
+        scaleHeight= IMG_HEIGHT;
         image=new ImageIcon(image.getImage().getScaledInstance(
-                imgWidthAndHeight.get("width"), imgWidthAndHeight.get("height"),
-                Image.SCALE_DEFAULT));
+                scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
+
         imgLabel.setIcon(image);
         imgLabel.setHorizontalAlignment(JLabel.CENTER);
         imgLabel.setVerticalAlignment(JLabel.CENTER);
@@ -72,27 +74,17 @@ public class Main extends JPanel implements ActionListener {
 //                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //                frame.setVisible(true);
             }
-
-
-
             @Override
             public void mousePressed(MouseEvent e) {
-
             }
-
             @Override
             public void mouseReleased(MouseEvent e) {
-
             }
-
             @Override
             public void mouseEntered(MouseEvent e) {
-
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
-
             }
         });
 
@@ -108,11 +100,24 @@ public class Main extends JPanel implements ActionListener {
         textEditPanel.setLayout(new BorderLayout());
 
         /*用户输入表情包文字*/
-        tf = new JTextField(20);
-        tf.setFont(new Font("黑体", Font.BOLD, 19));
-        tf.setPreferredSize(new Dimension(50, 60));
-        tf.setHorizontalAlignment(JTextField.CENTER);
-        textEditPanel.add(tf, BorderLayout.CENTER);
+        textPane = new JTextPane();
+        textPane.setFont(new Font("黑体", Font.BOLD, 19));
+        textPane.setPreferredSize(new Dimension(50, 80));
+
+        //设置字体（黑色，居中，16）
+        SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
+        StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_CENTER);
+        StyleConstants.setFontFamily(simpleAttributeSet, "lucida bright bold");
+        StyleConstants.setFontSize(simpleAttributeSet, 22);
+      //  StyleConstants.setBackground(simpleAttributeSet, new Color(15,16,158));
+        //将字体属性给textPane
+        StyledDocument doc = textPane.getStyledDocument();
+        doc.setCharacterAttributes(105, doc.getLength()-105, simpleAttributeSet, false);
+        doc.setParagraphAttributes(0, 104, simpleAttributeSet, false);
+        //加上滚动条
+        JScrollPane scrollPane = new JScrollPane(textPane);
+        textEditPanel.add(scrollPane, BorderLayout.CENTER);
+
         /*生成按钮*/
         JButton submit = new JButton("生成表情包！");
         submit.setFont(new Font("黑体", Font.BOLD, 18));
@@ -134,10 +139,7 @@ public class Main extends JPanel implements ActionListener {
         switch (command) {
 //            生成表情包
             case "submit":
-                String text = tf.getText();
-//                JOptionPane.showMessageDialog(null,"hello", "QUESTION_MESSAGE", JOptionPane.QUESTION_MESSAGE);
-
-                exportImg(text);
+                summitCommend();
                 break;
             case "changePic":
                 JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir") + "/pics"));
@@ -153,10 +155,11 @@ public class Main extends JPanel implements ActionListener {
                     ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
                     //图片等比缩放函数
                     Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
+                   scaleWidth = imgWidthAndHeight.get("width");
+                   scaleHeight= imgWidthAndHeight.get("height");
 
                     image=new ImageIcon(image.getImage().getScaledInstance(
-                            imgWidthAndHeight.get("width"), imgWidthAndHeight.get("height"),
-                            Image.SCALE_DEFAULT));
+                            scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
                     imgLabel.setIcon(image);                }
                 break;
             default:
@@ -164,104 +167,10 @@ public class Main extends JPanel implements ActionListener {
 
     }
 
-    //实例输入：
+    //实例输入：Width
     //我想卖可乐
     //你到底是要卖一辈子糖水还是要跟我一起改变世界
     //你到底是要卖一辈子糖水还是要跟我一起改变世界。不，我只想卖可口可乐
-
-    @SuppressWarnings("AlibabaLowerCamelCaseVariableNaming")
-    public void exportImg(String inputStr) {
-        try {
-            //读入表情包图片
-            InputStream is = new FileInputStream(openFile.getAbsolutePath());
-            System.out.println(openFile.getName());
-            //读入图片
-            BufferedImage buffImg = ImageIO.read(is);
-
-            final int FIRST_ROW_Y = buffImg.getHeight() + WORD_HEIGHT - 5;
-            int imageWidth = buffImg.getWidth();
-            //maxWordNums 每行最多多少字
-            final int maxWordNums = imageWidth / WORD_WIDTH;
-            //输入的字符总长度
-            int strLenth = inputStr.length();
-            //将会有几行
-            int rowCount = strLenth / maxWordNums + 1;
-
-
-            //bufferedImage = 创建新的BufferedImage，高度随文字的行数改变
-            BufferedImage bufferedImage = new BufferedImage(buffImg.getWidth(), buffImg.getHeight() + rowCount * WORD_HEIGHT + 15, BufferedImage.TYPE_INT_RGB);
-            //将扩增的部分用矩形填充为白色（默认为黑色）
-            bufferedImage.getGraphics().fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
-            bufferedImage.getGraphics().setColor(Color.white);
-            bufferedImage.getGraphics().dispose();
-
-            bufferedImage.getGraphics().drawImage(buffImg, 0, 0, buffImg.getWidth(), buffImg.getHeight(), null);
-
-            //得到画笔对象
-            Graphics graphics = bufferedImage.getGraphics();
-
-
-            //最后一个参数用来设置字体的大小
-            graphics.setColor(Color.BLACK);
-            graphics.setFont(new Font("黑体", Font.BOLD, 35));
-
-
-            for (int i = 1; i <= rowCount; ++i) {
-                /**
-                 *  xy为坐标
-                 *  everyRowStr为每一行的字符串
-                 *  stringBuffer作为缓存输入，把总字符串切割
-                 *  finish作为每行切割的尾序号
-                 * */
-                int x = 0, y = 0;
-                String everyRowStr = "";
-                StringBuffer stringBuffer = new StringBuffer();
-                //判断是否是最后一行
-                int finish = i != rowCount ? (i) * maxWordNums : inputStr.length();
-
-                for (int j = (i - 1) * maxWordNums; j < finish; j++) {
-                    stringBuffer.append(inputStr.charAt(j));
-                }
-                everyRowStr = stringBuffer.toString();
-                x = (imageWidth - WORD_WIDTH * (everyRowStr.length())) / 2;
-                y = FIRST_ROW_Y + (i - 1) * WORD_HEIGHT;
-
-                //绘制文字
-                graphics.drawString(everyRowStr, x, y);
-            }
-
-
-            graphics.dispose();
-
-            //获取桌面路径
-            FileSystemView fsv = FileSystemView.getFileSystemView();
-            //这便是读取桌面路径的方法了
-            File com = fsv.getHomeDirectory();
-            String path = com.getPath();
-
-            OutputStream os = new FileOutputStream(path + "/新表情.jpg");
-            //将输出流写入图片中
-            ImageIO.write(bufferedImage, "jpg", os);
-
-            is.close();
-            os.close();
-
-            //打开产生图片的文件夹
-            Runtime.getRuntime().exec("cmd /c start explorer " + path);
-
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-
-            JOptionPane.showMessageDialog(null, "图片路径不存在", "错误", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
-
-
     /**
      *  创建GUI
      */
@@ -296,5 +205,26 @@ public class Main extends JPanel implements ActionListener {
                 createAndShowGUI();
             }
         });
+    }
+
+    /**生成图片事件
+     * */
+    private void summitCommend(){
+        String text = textPane.getText();
+        String newMemePath = ImageProcess.drawImg(text,WORD_WIDTH,WORD_HEIGHT,openFile);
+        //打开错误值
+        final String WRONG_PATH = "0";
+        if (!newMemePath.equals(WRONG_PATH)) {
+
+            ImageIcon image = new ImageIcon(newMemePath);
+            //图片等比缩放函数
+            Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
+            scaleWidth = imgWidthAndHeight.get("width");
+            scaleHeight= imgWidthAndHeight.get("height");
+
+            image=new ImageIcon(image.getImage().getScaledInstance(
+                    scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
+            imgLabel.setIcon(image);                }
+
     }
 }
