@@ -70,9 +70,7 @@ public class Main extends JPanel implements ActionListener {
         imgLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                JFrame frame = new ImageViewerFrame();
-//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//                frame.setVisible(true);
+                changePic();
             }
             @Override
             public void mousePressed(MouseEvent e) {
@@ -142,25 +140,7 @@ public class Main extends JPanel implements ActionListener {
                 summitCommend();
                 break;
             case "changePic":
-                JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir") + "/pics"));
-                //文件名过滤器
-                FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                        "请选择jpg格式图片", "jpg");
-                //给文件选择器加入文件过滤器
-                fileChooser.setFileFilter(filter);
-
-                fileChooser.showOpenDialog(null);
-                openFile = fileChooser.getSelectedFile();
-                if (openFile != null) {
-                    ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
-                    //图片等比缩放函数
-                    Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
-                   scaleWidth = imgWidthAndHeight.get("width");
-                   scaleHeight= imgWidthAndHeight.get("height");
-
-                    image=new ImageIcon(image.getImage().getScaledInstance(
-                            scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
-                    imgLabel.setIcon(image);                }
+                changePic();
                 break;
             default:
         }
@@ -227,4 +207,29 @@ public class Main extends JPanel implements ActionListener {
             imgLabel.setIcon(image);                }
 
     }
+
+    /**更换模板
+     * */
+    private void changePic(){
+        JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir") + "/pics"));
+        //文件名过滤器
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "请选择jpg格式图片", "jpg");
+        //给文件选择器加入文件过滤器
+        fileChooser.setFileFilter(filter);
+
+        fileChooser.showOpenDialog(null);
+        openFile = fileChooser.getSelectedFile();
+        if (openFile != null) {
+            ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
+            //图片等比缩放函数
+            Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
+            scaleWidth = imgWidthAndHeight.get("width");
+            scaleHeight= imgWidthAndHeight.get("height");
+
+            image=new ImageIcon(image.getImage().getScaledInstance(
+                    scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
+            imgLabel.setIcon(image);                }
+    }
+
 }
