@@ -25,7 +25,7 @@ public class ImageProcess {
 
 
     /**
-     * scaleImg（）； 图像缩放方法,将图片缩放到适合控件的大小
+     * scaleImg()； 图像缩放方法,将图片缩放到适合控件的大小
      * ImageIcon image为显示的图片
      * int conWidth,int conHeight 分别是图片的长和宽
      */

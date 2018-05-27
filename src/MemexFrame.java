@@ -1,5 +1,7 @@
 package src;
 
+import src.com.picschooser.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +18,7 @@ import javax.swing.text.StyledDocument;
 /**
  * @author TimVan
  */
-public class Main extends JPanel implements ActionListener {
+public class MemexFrame extends JPanel implements ActionListener {
 
     /**
      * textPane 用户输入的表情包文字
@@ -39,7 +41,7 @@ public class Main extends JPanel implements ActionListener {
     File openFile;
     JLabel imgLabel;
 
-    public Main() {
+    public MemexFrame() {
         super(new BorderLayout());
         /*图片模块*/
         JPanel imgPanel = new JPanel();
@@ -55,7 +57,7 @@ public class Main extends JPanel implements ActionListener {
 
         /*展示图片*/
         imgLabel = new JLabel("");
-        openFile = new File("src/熊猫人不屑.jpg");
+        openFile = new File("熊猫人不屑.jpg");
         ImageIcon image = new ImageIcon("pics/" + openFile.getName());
         scaleWidth = (int)(IMG_WIDTH*1.2);;
         scaleHeight= IMG_HEIGHT;
@@ -107,7 +109,6 @@ public class Main extends JPanel implements ActionListener {
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_CENTER);
         StyleConstants.setFontFamily(simpleAttributeSet, "lucida bright bold");
         StyleConstants.setFontSize(simpleAttributeSet, 22);
-      //  StyleConstants.setBackground(simpleAttributeSet, new Color(15,16,158));
         //将字体属性给textPane
         StyledDocument doc = textPane.getStyledDocument();
         doc.setCharacterAttributes(105, doc.getLength()-105, simpleAttributeSet, false);
@@ -140,6 +141,7 @@ public class Main extends JPanel implements ActionListener {
                 summitCommend();
                 break;
             case "changePic":
+                //picsChooser();
                 changePic();
                 break;
             default:
@@ -160,13 +162,13 @@ public class Main extends JPanel implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
-        JComponent newContentPane = new Main();
+        JComponent newContentPane = new MemexFrame();
         newContentPane.setOpaque(true);
         frame.setContentPane(newContentPane);
 
         //使用Toolkit设置图标
         Toolkit tk=Toolkit.getDefaultToolkit();
-        Image image=tk.createImage("src/icon.jpg");
+        Image image=tk.createImage("icon.jpg");
         frame.setIconImage(image);
 
         //Display the window.
@@ -202,6 +204,9 @@ public class Main extends JPanel implements ActionListener {
             scaleWidth = imgWidthAndHeight.get("width");
             scaleHeight= imgWidthAndHeight.get("height");
 
+            System.out.println("scaleWidth = "+scaleWidth);
+            System.out.println("scaleHeight = "+scaleHeight);
+
             image=new ImageIcon(image.getImage().getScaledInstance(
                     scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
             imgLabel.setIcon(image);                }
@@ -211,10 +216,12 @@ public class Main extends JPanel implements ActionListener {
     /**更换模板
      * */
     private void changePic(){
-        JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir") + "/pics"));
+
+        JFileChooser fileChooser = new PictureChooser();
+
         //文件名过滤器
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "请选择jpg格式图片", "jpg");
+                "请选择jpg格式的表情包图片", "jpg");
         //给文件选择器加入文件过滤器
         fileChooser.setFileFilter(filter);
 
@@ -231,5 +238,11 @@ public class Main extends JPanel implements ActionListener {
                     scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
             imgLabel.setIcon(image);                }
     }
+
+    private void picsChooser(){
+        JFileChooser pictureChooser = new PictureChooser();
+        pictureChooser.showOpenDialog(null);
+    }
+
 
 }
