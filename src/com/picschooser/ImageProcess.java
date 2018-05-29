@@ -1,4 +1,4 @@
-package src;
+package src.com.picschooser;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

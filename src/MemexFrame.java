@@ -72,7 +72,7 @@ public class MemexFrame extends JPanel implements ActionListener {
         imgLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                changePic();
+                picsChooser();
             }
             @Override
             public void mousePressed(MouseEvent e) {
@@ -240,8 +240,12 @@ public class MemexFrame extends JPanel implements ActionListener {
     }
 
     private void picsChooser(){
-        JFileChooser pictureChooser = new PictureChooser();
-        pictureChooser.showOpenDialog(null);
+        JFrame frame = new JFrame("请选择一个表情包图片");
+        frame.setContentPane(new ImageChooser().panel);
+        frame.setSize(new Dimension(800,500));
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
     }
 
 
