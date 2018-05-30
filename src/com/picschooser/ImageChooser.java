@@ -21,53 +21,11 @@ public class ImageChooser extends JFrame {
     public JButton okButton;
     public JTable imageTable;
 
+
+
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        /*
-         * 设置JTable的列名
-         */
-        String[] columnNames = {"图片", "简介"};
 
-        Object[][] obj = new Object[2][6];
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                switch (j) {
-                    case 0:
-                        obj[i][j] = "赵匡义";
-                        break;
-                    case 1:
-                        obj[i][j] = "123215";
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        imageTable = new JTable(obj, columnNames);
-        /*
-         * 设置JTable的列默认的宽度和高度
-         */
-        TableColumn column = null;
-        int colunms = imageTable.getColumnCount();
-        for (int i = 0; i < colunms; i++) {
-            column = imageTable.getColumnModel().getColumn(i);
-            /*将每一列的默认宽度设置为100*/
-            column.setPreferredWidth(100);
-        }
-        /*
-         * 设置JTable自动调整列表的状态，此处设置为关闭
-         */
-        imageTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-        /*用JScrollPane装载JTable，这样超出范围的列就可以通过滚动条来查看*/
-        JScrollPane scroll = new JScrollPane(imageTable);
-        scroll.setSize(300, 200);
-
-        //add(scroll);
-
-        JButton jButton = new JButton("hello");
-        imageBrowser.add(jButton);
 
 
     }

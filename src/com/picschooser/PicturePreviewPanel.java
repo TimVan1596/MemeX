@@ -68,10 +68,10 @@ public class PicturePreviewPanel extends JPanel implements PropertyChangeListene
 		setLayout(new BorderLayout(5,5));
 		setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		
-		add(new JLabel("Preview:"), BorderLayout.NORTH);
+		add(new JLabel("表情包预览"), BorderLayout.NORTH);
 		label = new JLabel();
 		label.setOpaque(false);
-		label.setPreferredSize(new Dimension(300, 300));
+		label.setPreferredSize(new Dimension(320, 320));
 		
 		maxImgWidth = 295;
 		label.setBorder(BorderFactory.createEtchedBorder());

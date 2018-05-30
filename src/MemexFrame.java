@@ -1,6 +1,7 @@
 package src;
 
 import src.com.picschooser.*;
+import src.com.memexsql.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,14 @@ import javax.swing.text.StyledDocument;
 public class MemexFrame extends JPanel implements ActionListener {
 
     /**
+     * versionInfo 当前版本号
+     * releaseDate  发布日期
+     * */
+
+    private static final String versionInfo = "v0.4";
+    private static final String releaseDate = "2018年5月30日21:17:11";
+
+    /**
      * textPane 用户输入的表情包文字
      * WORD_WIDTH 单个中文的字宽
      * WORD_HEIGHT 每行的行高
@@ -34,6 +43,7 @@ public class MemexFrame extends JPanel implements ActionListener {
     private static final int IMG_HEIGHT = 400;
     private static final int IMG_WIDTH = 400;
 
+
     int scaleWidth = 0;
     int scaleHeight = 0;
 
@@ -43,6 +53,11 @@ public class MemexFrame extends JPanel implements ActionListener {
 
     public MemexFrame() {
         super(new BorderLayout());
+
+
+
+
+
         /*图片模块*/
         JPanel imgPanel = new JPanel();
         imgPanel.setLayout(new BorderLayout());
@@ -158,8 +173,9 @@ public class MemexFrame extends JPanel implements ActionListener {
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("MemeX - 表情包生成器 v0.3");
+        JFrame frame = new JFrame("MemeX - 表情包生成器 "+versionInfo);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 
         //Create and set up the content pane.
         JComponent newContentPane = new MemexFrame();
@@ -170,6 +186,40 @@ public class MemexFrame extends JPanel implements ActionListener {
         Toolkit tk=Toolkit.getDefaultToolkit();
         Image image=tk.createImage("icon.jpg");
         frame.setIconImage(image);
+
+
+
+        /*
+         * 创建一个菜单栏
+         */
+        JMenuBar menuBar = new JMenuBar();
+
+        /*
+         * 创建一级菜单
+         */
+        JMenu fileMenu = new JMenu("文件");
+        JMenu editMenu = new JMenu("编辑");
+        JMenu viewMenu = new JMenu("视图");
+        //JMenu aboutMenu = new JMenu("关于");
+        JMenuItem aboutMenu = new JMenuItem("关于");
+        // 一级菜单添加到菜单栏
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+        menuBar.add(viewMenu);
+        menuBar.add(aboutMenu);
+        aboutMenu.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame,
+                        "版本号:"+versionInfo+"\n" +
+                                "发布时间:"+releaseDate+"\n" +
+                                "开发团队：我在芜湖玩Java\n",
+                        "关于",JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        frame.setJMenuBar(menuBar);
+
+
 
         //Display the window.
         frame.pack();
@@ -242,6 +292,10 @@ public class MemexFrame extends JPanel implements ActionListener {
     private void picsChooser(){
         JFrame frame = new JFrame("请选择一个表情包图片");
         frame.setContentPane(new ImageChooser().panel);
+
+        Container container = frame.getContentPane();
+        container.add(new InfoMysql().getMemesJTable());
+
         frame.setSize(new Dimension(800,500));
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
