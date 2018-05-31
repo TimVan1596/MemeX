@@ -4,10 +4,7 @@ import src.com.picschooser.*;
 import src.com.memexsql.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.*;
 import java.util.Map;
 import javax.swing.*;
@@ -19,15 +16,16 @@ import javax.swing.text.StyledDocument;
 /**
  * @author TimVan
  */
-public class MemexFrame extends JPanel implements ActionListener {
+public class MemexFrame extends JPanel
+        implements ActionListener {
 
     /**
      * versionInfo 当前版本号
      * releaseDate  发布日期
-     * */
+     */
 
     private static final String versionInfo = "v0.4";
-    private static final String releaseDate = "2018年5月30日21:17:11";
+    private static final String releaseDate = "2018年06月01日03:08:07";
 
     /**
      * textPane 用户输入的表情包文字
@@ -51,12 +49,28 @@ public class MemexFrame extends JPanel implements ActionListener {
     File openFile;
     JLabel imgLabel;
 
+
+    public void changePicByUrl(String url) {
+
+//        JOptionPane.showMessageDialog(null,
+//                "fuck", url, 0);
+
+        String address = ImageProcess.saveToFile(url);
+
+        openFile = new File(address);
+        ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
+        //图片等比缩放函数
+        Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image, IMG_WIDTH, IMG_HEIGHT);
+        scaleWidth = imgWidthAndHeight.get("width");
+        scaleHeight = imgWidthAndHeight.get("height");
+
+        image = new ImageIcon(image.getImage().getScaledInstance(
+                scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
+        imgLabel.setIcon(image);
+    }
+
     public MemexFrame() {
         super(new BorderLayout());
-
-
-
-
 
         /*图片模块*/
         JPanel imgPanel = new JPanel();
@@ -74,9 +88,10 @@ public class MemexFrame extends JPanel implements ActionListener {
         imgLabel = new JLabel("");
         openFile = new File("熊猫人不屑.jpg");
         ImageIcon image = new ImageIcon("pics/" + openFile.getName());
-        scaleWidth = (int)(IMG_WIDTH*1.2);;
-        scaleHeight= IMG_HEIGHT;
-        image=new ImageIcon(image.getImage().getScaledInstance(
+        scaleWidth = (int) (IMG_WIDTH * 1.2);
+        ;
+        scaleHeight = IMG_HEIGHT;
+        image = new ImageIcon(image.getImage().getScaledInstance(
                 scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
 
         imgLabel.setIcon(image);
@@ -89,15 +104,19 @@ public class MemexFrame extends JPanel implements ActionListener {
             public void mouseClicked(MouseEvent e) {
                 picsChooser();
             }
+
             @Override
             public void mousePressed(MouseEvent e) {
             }
+
             @Override
             public void mouseReleased(MouseEvent e) {
             }
+
             @Override
             public void mouseEntered(MouseEvent e) {
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
             }
@@ -126,7 +145,7 @@ public class MemexFrame extends JPanel implements ActionListener {
         StyleConstants.setFontSize(simpleAttributeSet, 22);
         //将字体属性给textPane
         StyledDocument doc = textPane.getStyledDocument();
-        doc.setCharacterAttributes(105, doc.getLength()-105, simpleAttributeSet, false);
+        doc.setCharacterAttributes(105, doc.getLength() - 105, simpleAttributeSet, false);
         doc.setParagraphAttributes(0, 104, simpleAttributeSet, false);
         //加上滚动条
         JScrollPane scrollPane = new JScrollPane(textPane);
@@ -168,12 +187,13 @@ public class MemexFrame extends JPanel implements ActionListener {
     //我想卖可乐
     //你到底是要卖一辈子糖水还是要跟我一起改变世界
     //你到底是要卖一辈子糖水还是要跟我一起改变世界。不，我只想卖可口可乐
+
     /**
-     *  创建GUI
+     * 创建GUI
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("MemeX - 表情包生成器 "+versionInfo);
+        JFrame frame = new JFrame("MemeX - 表情包生成器 " + versionInfo);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
@@ -183,8 +203,8 @@ public class MemexFrame extends JPanel implements ActionListener {
         frame.setContentPane(newContentPane);
 
         //使用Toolkit设置图标
-        Toolkit tk=Toolkit.getDefaultToolkit();
-        Image image=tk.createImage("icon.jpg");
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Image image = tk.createImage("icon.jpg");
         frame.setIconImage(image);
 
 
@@ -207,18 +227,17 @@ public class MemexFrame extends JPanel implements ActionListener {
         menuBar.add(editMenu);
         menuBar.add(viewMenu);
         menuBar.add(aboutMenu);
-        aboutMenu.addActionListener(new ActionListener(){
+        aboutMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(frame,
-                        "版本号:"+versionInfo+"\n" +
-                                "发布时间:"+releaseDate+"\n" +
+                        "版本号:" + versionInfo + "\n" +
+                                "发布时间:" + releaseDate + "\n" +
                                 "开发团队：我在芜湖玩Java\n",
-                        "关于",JOptionPane.INFORMATION_MESSAGE);
+                        "关于", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         frame.setJMenuBar(menuBar);
-
 
 
         //Display the window.
@@ -239,33 +258,36 @@ public class MemexFrame extends JPanel implements ActionListener {
         });
     }
 
-    /**生成图片事件
-     * */
-    private void summitCommend(){
+    /**
+     * 生成图片事件
+     */
+    private void summitCommend() {
         String text = textPane.getText();
-        String newMemePath = ImageProcess.drawImg(text,WORD_WIDTH,WORD_HEIGHT,openFile);
+        String newMemePath = ImageProcess.drawImg(text, WORD_WIDTH, WORD_HEIGHT, openFile);
         //打开错误值
         final String WRONG_PATH = "0";
         if (!newMemePath.equals(WRONG_PATH)) {
 
             ImageIcon image = new ImageIcon(newMemePath);
             //图片等比缩放函数
-            Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
+            Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image, IMG_WIDTH, IMG_HEIGHT);
             scaleWidth = imgWidthAndHeight.get("width");
-            scaleHeight= imgWidthAndHeight.get("height");
+            scaleHeight = imgWidthAndHeight.get("height");
 
-            System.out.println("scaleWidth = "+scaleWidth);
-            System.out.println("scaleHeight = "+scaleHeight);
+            System.out.println("scaleWidth = " + scaleWidth);
+            System.out.println("scaleHeight = " + scaleHeight);
 
-            image=new ImageIcon(image.getImage().getScaledInstance(
+            image = new ImageIcon(image.getImage().getScaledInstance(
                     scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
-            imgLabel.setIcon(image);                }
+            imgLabel.setIcon(image);
+        }
 
     }
 
-    /**更换模板
-     * */
-    private void changePic(){
+    /**
+     * 更换模板
+     */
+    private void changePic() {
 
         JFileChooser fileChooser = new PictureChooser();
 
@@ -280,18 +302,54 @@ public class MemexFrame extends JPanel implements ActionListener {
         if (openFile != null) {
             ImageIcon image = new ImageIcon(openFile.getAbsolutePath());
             //图片等比缩放函数
-            Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image,IMG_WIDTH,IMG_HEIGHT);
+            Map<String, Integer> imgWidthAndHeight = ImageProcess.scaleImage(image, IMG_WIDTH, IMG_HEIGHT);
             scaleWidth = imgWidthAndHeight.get("width");
-            scaleHeight= imgWidthAndHeight.get("height");
+            scaleHeight = imgWidthAndHeight.get("height");
 
-            image=new ImageIcon(image.getImage().getScaledInstance(
+            image = new ImageIcon(image.getImage().getScaledInstance(
                     scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
-            imgLabel.setIcon(image);                }
+            imgLabel.setIcon(image);
+        }
     }
 
-    private void picsChooser(){
-        ImageChooserFrame imageChooserFramenew = new ImageChooserFrame();
-        imageChooserFramenew.createGUI();
+    //打开表情模板选择器
+    private void picsChooser() {
+
+        JFrame frame = new JFrame("请选择一个表情包图片");
+
+        //实例化由IDEA UIDesign 的Form文件
+        ImageChooser imageChooser = new ImageChooser();
+        frame.setContentPane(imageChooser.panel);
+
+        Container container = frame.getContentPane();
+        //在通过getMemesJTable()方法传入图片表格，并将JTable套入JScrollPane
+        JTable imageTable = new InfoMysql().getMemesJTable(imageChooser);
+        JScrollPane jScrollPane = new JScrollPane(imageTable);
+        container.add(jScrollPane);
+
+
+        //添加关闭事件
+        imageChooser.okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                int row = imageTable.getSelectedRow();
+                //增加热度
+                int id = (int) imageTable.getValueAt(row, 0);
+                JDBCUtil.updatePicsTimes(id);
+
+                //获取点击中的URL
+                int column = 2;
+                String URL = (String) imageTable.getValueAt(row, column);
+                changePicByUrl(URL);
+                frame.dispose();
+            }
+        });
+
+        frame.setSize(new Dimension(800, 500));
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
     }
 
 

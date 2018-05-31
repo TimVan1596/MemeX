@@ -8,6 +8,11 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * @author TimVan
@@ -39,46 +44,42 @@ public class ImageProcess {
         double imgWidth = image.getIconWidth();
         double imgHeight = image.getIconHeight();
         //原图的宽长比
-        double imgRatio = imgWidth/imgHeight;
+        double imgRatio = imgWidth / imgHeight;
         //最终输出宽和长
         double reImgWidth = 0;
         double reImgHeight = 0;
 
 
         //若原图的宽小于控件宽
-        if(imgWidth < conWidth){
-            if(imgHeight < conHeight){
-                reImgWidth = conWidth*SMALL_SCALE;
-                reImgHeight = reImgWidth/imgRatio;
-            }
-            else {
-                reImgHeight = conHeight*SMALL_SCALE;
-                reImgWidth = reImgHeight*imgRatio;
+        if (imgWidth < conWidth) {
+            if (imgHeight < conHeight) {
+                reImgWidth = conWidth * SMALL_SCALE;
+                reImgHeight = reImgWidth / imgRatio;
+            } else {
+                reImgHeight = conHeight * SMALL_SCALE;
+                reImgWidth = reImgHeight * imgRatio;
             }
         }
         //若原图的宽大于控件宽
         else {
-            if(imgHeight < conHeight){
-                reImgWidth = conWidth*SMALL_SCALE;
-                reImgHeight = reImgWidth/imgRatio;
+            if (imgHeight < conHeight) {
+                reImgWidth = conWidth * SMALL_SCALE;
+                reImgHeight = reImgWidth / imgRatio;
             }
             //若原图的长宽同时大于控件的长宽，最复杂的情况
             else {
                 //控件的长比宽大
-                double conRatio = conWidth/conHeight;
+                double conRatio = conWidth / conHeight;
 
-                if (imgRatio < conRatio){
-                    reImgHeight = conHeight*SMALL_SCALE;
-                    reImgWidth = reImgHeight*imgRatio;
-                }
-                else {
-                    reImgWidth = conWidth*SMALL_SCALE;
-                    reImgHeight = reImgWidth/imgRatio;
+                if (imgRatio < conRatio) {
+                    reImgHeight = conHeight * SMALL_SCALE;
+                    reImgWidth = reImgHeight * imgRatio;
+                } else {
+                    reImgWidth = conWidth * SMALL_SCALE;
+                    reImgHeight = reImgWidth / imgRatio;
                 }
             }
         }
-
-
 
 
         imgWidthAndHeight.put("width", (int) reImgWidth);
@@ -92,7 +93,7 @@ public class ImageProcess {
     /** 将传入的字符串重绘图像，并输出图片文件
      * 返回图片文件的路径，返回“0”为错误
      * */
-    public static String drawImg(String inputStr , int WORD_WIDTH , int WORD_HEIGHT ,File openFile) {
+    public static String drawImg(String inputStr, int WORD_WIDTH, int WORD_HEIGHT, File openFile) {
         String newMemePath = "0";
         try {
             //读入表情包图片
@@ -174,8 +175,7 @@ public class ImageProcess {
             //打开产生图片的文件夹，判断是否是Linux
             if (isLinux() == true) {
                 Runtime.getRuntime().exec("sh nautilus " + path);
-            }
-            else{
+            } else {
                 Runtime.getRuntime().exec("cmd /c start explorer " + path);
             }
 
@@ -189,10 +189,79 @@ public class ImageProcess {
             JOptionPane.showMessageDialog(null, "图片路径不存在", "错误", JOptionPane.ERROR_MESSAGE);
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             return newMemePath;
         }
 
     }
+
+    /***
+     * 从URL地址读取图片流
+     */
+    public static BufferedImage getImageBufferStream(String destUrl) {
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        HttpURLConnection httpUrl = null;
+        URL url = null;
+        int BUFFER_SIZE = 1024;
+        byte[] buf = new byte[BUFFER_SIZE];
+        int size = 0;
+        try {
+            url = new URL(destUrl);
+            httpUrl = (HttpURLConnection) url.openConnection();
+            httpUrl.connect();
+            bis = new BufferedInputStream(httpUrl.getInputStream());
+
+        } catch (IOException e) {
+        } catch (ClassCastException e) {
+        } finally {
+            try {
+                //读入图片
+                BufferedImage buffImg = ImageIO.read(bis);
+                bis.close();
+                httpUrl.disconnect();
+                return buffImg;
+            } catch (IOException e) {
+            } catch (NullPointerException e) {
+            }
+        }
+        return null;
+
+    }
+
+    //输入URL地址，返回保存图片的路径
+    public static String saveToFile(String destUrl) {
+        String address = "cache.jpg";
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        HttpURLConnection httpUrl = null;
+        URL url = null;
+        int BUFFER_SIZE = 1024;
+        byte[] buf = new byte[BUFFER_SIZE];
+        int size = 0;
+        try {
+            url = new URL(destUrl);
+            httpUrl = (HttpURLConnection) url.openConnection();
+            httpUrl.connect();
+            bis = new BufferedInputStream(httpUrl.getInputStream());
+            fos = new FileOutputStream(address);
+            while ((size = bis.read(buf)) != -1) {
+                fos.write(buf, 0, size);
+            }
+            fos.flush();
+        } catch (IOException e) {
+        } catch (ClassCastException e) {
+        } finally {
+            try {
+                fos.close();
+                bis.close();
+                httpUrl.disconnect();
+            } catch (IOException e) {
+            } catch (NullPointerException e) {
+            }
+        }
+        return address;
+    }
+
+
 }
