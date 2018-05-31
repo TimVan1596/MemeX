@@ -23,25 +23,29 @@ public class InfoMysql {
          */
         String[] columnNames = { "简介","地址","下载次数"};
 
-        Object[][] obj = new Object[3][6];
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                switch (j) {
-                    case 0:
-                        obj[i][j] = "赵匡义";
-                        break;
-                    case 1:
-                        obj[i][j] = "123215";
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+        ///尝试使用Object
+//        Object[][] obj = new Object[3][6];
+//        for (int i = 0; i < 2; i++) {
+//            for (int j = 0; j < 2; j++) {
+//                switch (j) {
+//                    case 0:
+//                        obj[i][j] = "赵匡义";
+//                        break;
+//                    case 1:
+//                        obj[i][j] = "123215";
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//        }
 
    //     jdbcUtil.excuteQuery("select * from memepics",null);
 
-        JTable imageTable = new JTable(obj, columnNames);
+        JTable imageTable = new JTable(JDBCUtil.getPicsInfo(), columnNames);
+
+        JTableHeader header = imageTable.getTableHeader();
+
         /*
          * 设置JTable的列默认的宽度和高度
          */
@@ -50,7 +54,7 @@ public class InfoMysql {
         for (int i = 0; i < colunms; i++) {
             column = imageTable.getColumnModel().getColumn(i);
             /*将每一列的默认宽度设置为100*/
-            column.setPreferredWidth(50*(i+1));
+            column.setPreferredWidth((colunms-i)*50);
         }
         //设置高度
         imageTable.setRowHeight(55);
