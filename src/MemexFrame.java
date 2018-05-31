@@ -24,8 +24,9 @@ public class MemexFrame extends JPanel
      * releaseDate  发布日期
      */
 
-    private static final String versionInfo = "v0.4";
-    private static final String releaseDate = "2018年06月01日03:08:07";
+    private static final String versionInfo = "v0.4 （预览版）";
+    private static final String releaseDate =
+            "2018年06月01日04:40:06";
 
     /**
      * textPane 用户输入的表情包文字
