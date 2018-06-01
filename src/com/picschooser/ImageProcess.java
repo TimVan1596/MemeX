@@ -163,7 +163,16 @@ public class ImageProcess {
             File com = fsv.getHomeDirectory();
             String path = com.getPath();
             //更改最终返回的表情路径
-            newMemePath = path + "/新表情.jpg";
+
+             File dirFile = new File(path + "/MemeX表情包");
+                //无则创建
+                boolean bFile = dirFile.exists();
+                if (bFile == false) {
+                    dirFile.mkdir();
+                }
+
+
+            newMemePath = path + "/MemeX表情包/新表情.jpg";
 
             OutputStream os = new FileOutputStream(newMemePath);
             //将输出流写入图片中
@@ -174,9 +183,12 @@ public class ImageProcess {
 
             //打开产生图片的文件夹，判断是否是Linux
             if (isLinux() == true) {
-                Runtime.getRuntime().exec("sh nautilus " + path);
+                Runtime.getRuntime().exec("sh nautilus "
+                        + path + "/MemeX表情包");
             } else {
-                Runtime.getRuntime().exec("cmd /c start explorer " + path);
+                System.out.println(path);
+                Runtime.getRuntime().exec("cmd /c start explorer "
+                        + path + "\\MemeX表情包");
             }
 
         } catch (FileNotFoundException e) {
@@ -199,6 +211,7 @@ public class ImageProcess {
      * 从URL地址读取图片流
      */
     public static BufferedImage getImageBufferStream(String destUrl) {
+
         FileOutputStream fos = null;
         BufferedInputStream bis = null;
         HttpURLConnection httpUrl = null;

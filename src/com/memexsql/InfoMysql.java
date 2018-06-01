@@ -37,9 +37,12 @@ public class InfoMysql {
         };
 
         TableCellRenderer tcr = new ColorTableCellRenderer();
+        // 让内容居中
+       // tcr.setHorizontalAlignment(SwingConstants.CENTER);
+
+        ((ColorTableCellRenderer) tcr).setHorizontalAlignment(SwingConstants.CENTER);
         //为JTable增加渲染器，因为是针对于表格中的所有单元格，所有用Object.class
         imageTable.setDefaultRenderer(Object.class,tcr);
-
 
 
         //设置字体
@@ -131,6 +134,11 @@ public class InfoMysql {
 
             } else {
                 return super.getTableCellRendererComponent(table, value, isSelected,hasFocus, row, column);            }
+        }
+
+        @Override
+        public void setHorizontalAlignment(int alignment){
+            super.setHorizontalAlignment(alignment);
         }
 
     }
