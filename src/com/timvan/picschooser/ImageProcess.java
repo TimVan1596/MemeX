@@ -1,9 +1,12 @@
-package src.com.picschooser;
+package src.com.timvan.picschooser;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.HashMap;
@@ -89,6 +92,94 @@ public class ImageProcess {
     }
 
 
+    /***
+     * 从URL地址读取图片流
+     */
+    public static BufferedImage getImageBufferStream(String destUrl) {
+
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        HttpURLConnection httpUrl = null;
+        URL url = null;
+        int BUFFER_SIZE = 1024;
+        byte[] buf = new byte[BUFFER_SIZE];
+        int size = 0;
+        try {
+            url = new URL(destUrl);
+            httpUrl = (HttpURLConnection) url.openConnection();
+            httpUrl.connect();
+            bis = new BufferedInputStream(httpUrl.getInputStream());
+
+        } catch (IOException e) {
+        } catch (ClassCastException e) {
+        } finally {
+            try {
+                //读入图片
+                BufferedImage buffImg = ImageIO.read(bis);
+                bis.close();
+                httpUrl.disconnect();
+                return buffImg;
+            } catch (IOException e) {
+            } catch (NullPointerException e) {
+            }
+        }
+        return null;
+
+    }
+
+    //输入URL地址，返回保存图片的路径
+    public static String saveToFile(String destUrl) {
+        String address = "cache.jpg";
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        HttpURLConnection httpUrl = null;
+        URL url = null;
+        int BUFFER_SIZE = 1024;
+        byte[] buf = new byte[BUFFER_SIZE];
+        int size = 0;
+        try {
+            url = new URL(destUrl);
+            httpUrl = (HttpURLConnection) url.openConnection();
+            httpUrl.connect();
+            bis = new BufferedInputStream(httpUrl.getInputStream());
+            fos = new FileOutputStream(address);
+            while ((size = bis.read(buf)) != -1) {
+                fos.write(buf, 0, size);
+            }
+            fos.flush();
+        } catch (IOException e) {
+        } catch (ClassCastException e) {
+        } finally {
+            try {
+                fos.close();
+                bis.close();
+                httpUrl.disconnect();
+            } catch (IOException e) {
+            } catch (NullPointerException e) {
+            }
+        }
+        return address;
+    }
+
+    //复制图片到剪切板
+    public static void CopyToClipboard(final Image image) {
+        Transferable trans = new Transferable(){
+            public DataFlavor[] getTransferDataFlavors() {
+                return new DataFlavor[] { DataFlavor.imageFlavor };
+            }
+            public boolean isDataFlavorSupported(DataFlavor flavor) {
+                return DataFlavor.imageFlavor.equals(flavor);
+            }
+            public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                if(isDataFlavorSupported(flavor))
+                    return image;
+                throw new UnsupportedFlavorException(flavor);
+            }
+
+        };
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+    }
+
     @SuppressWarnings("AlibabaLowerCamelCaseVariableNaming")
     /** 将传入的字符串重绘图像，并输出图片文件
      * 返回图片文件的路径，返回“0”为错误
@@ -164,12 +255,12 @@ public class ImageProcess {
             String path = com.getPath();
             //更改最终返回的表情路径
 
-             File dirFile = new File(path + "/MemeX表情包");
-                //无则创建
-                boolean bFile = dirFile.exists();
-                if (bFile == false) {
-                    dirFile.mkdir();
-                }
+            File dirFile = new File(path + "/MemeX表情包");
+            //无则创建
+            boolean bFile = dirFile.exists();
+            if (bFile == false) {
+                dirFile.mkdir();
+            }
 
 
             newMemePath = path + "/MemeX表情包/新表情.jpg";
@@ -177,6 +268,8 @@ public class ImageProcess {
             OutputStream os = new FileOutputStream(newMemePath);
             //将输出流写入图片中
             ImageIO.write(bufferedImage, "jpg", os);
+            //将图片复制到剪切板
+            CopyToClipboard(bufferedImage);
 
             is.close();
             os.close();
@@ -206,75 +299,5 @@ public class ImageProcess {
         }
 
     }
-
-    /***
-     * 从URL地址读取图片流
-     */
-    public static BufferedImage getImageBufferStream(String destUrl) {
-
-        FileOutputStream fos = null;
-        BufferedInputStream bis = null;
-        HttpURLConnection httpUrl = null;
-        URL url = null;
-        int BUFFER_SIZE = 1024;
-        byte[] buf = new byte[BUFFER_SIZE];
-        int size = 0;
-        try {
-            url = new URL(destUrl);
-            httpUrl = (HttpURLConnection) url.openConnection();
-            httpUrl.connect();
-            bis = new BufferedInputStream(httpUrl.getInputStream());
-
-        } catch (IOException e) {
-        } catch (ClassCastException e) {
-        } finally {
-            try {
-                //读入图片
-                BufferedImage buffImg = ImageIO.read(bis);
-                bis.close();
-                httpUrl.disconnect();
-                return buffImg;
-            } catch (IOException e) {
-            } catch (NullPointerException e) {
-            }
-        }
-        return null;
-
-    }
-
-    //输入URL地址，返回保存图片的路径
-    public static String saveToFile(String destUrl) {
-        String address = "cache.jpg";
-        FileOutputStream fos = null;
-        BufferedInputStream bis = null;
-        HttpURLConnection httpUrl = null;
-        URL url = null;
-        int BUFFER_SIZE = 1024;
-        byte[] buf = new byte[BUFFER_SIZE];
-        int size = 0;
-        try {
-            url = new URL(destUrl);
-            httpUrl = (HttpURLConnection) url.openConnection();
-            httpUrl.connect();
-            bis = new BufferedInputStream(httpUrl.getInputStream());
-            fos = new FileOutputStream(address);
-            while ((size = bis.read(buf)) != -1) {
-                fos.write(buf, 0, size);
-            }
-            fos.flush();
-        } catch (IOException e) {
-        } catch (ClassCastException e) {
-        } finally {
-            try {
-                fos.close();
-                bis.close();
-                httpUrl.disconnect();
-            } catch (IOException e) {
-            } catch (NullPointerException e) {
-            }
-        }
-        return address;
-    }
-
 
 }

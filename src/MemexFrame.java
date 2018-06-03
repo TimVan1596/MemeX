@@ -1,13 +1,18 @@
 package src;
 
-import src.com.picschooser.*;
-import src.com.memexsql.*;
+import src.com.timvan.picschooser.*;
+import src.com.timvan.memexsql.*;
 
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
 import java.io.*;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -24,9 +29,9 @@ public class MemexFrame extends JPanel
      * releaseDate  发布日期
      */
 
-    private static final String versionInfo = "v0.4 （预览版）";
+    private static final String versionInfo = "v0.4";
     private static final String releaseDate =
-            "2018年06月01日04:40:06";
+            "2018年6月3日21:49:55";
 
     /**
      * textPane 用户输入的表情包文字
@@ -42,13 +47,19 @@ public class MemexFrame extends JPanel
     private static final int IMG_HEIGHT = 400;
     private static final int IMG_WIDTH = 400;
 
-
+    //缩放图片的尺寸
     int scaleWidth = 0;
     int scaleHeight = 0;
 
-    JTextPane textPane;
-    File openFile;
-    JLabel imgLabel;
+    //主窗口
+    private JFrame frame;
+    private JTextPane textPane;
+    private File openFile;
+    private JLabel imgLabel;
+    //图片上的右键菜单
+    private JPopupMenu imgPopMenu;
+    //状态栏
+    private JLabel statusbar;
 
 
     public void changePicByUrl(String url) {
@@ -99,6 +110,48 @@ public class MemexFrame extends JPanel
         imgLabel.setHorizontalAlignment(JLabel.CENTER);
         imgLabel.setVerticalAlignment(JLabel.CENTER);
 
+        //图片右键菜单
+        JMenuItem mCopy, mChange, mStore;
+        imgPopMenu = new JPopupMenu();
+
+        mCopy = new JMenuItem("复制到剪切板");
+        imgPopMenu.add(mCopy);
+
+
+        mCopy.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //Image image = new Image();
+                Image image = null;
+                try {
+                     image = ImageIO.read(new File(openFile.getAbsolutePath()));
+                }
+                catch (IOException ie){
+                    ie.printStackTrace();
+                }
+                finally {
+                    ImageProcess.CopyToClipboard(image);
+                }
+            }
+        });
+
+
+        mChange = new JMenuItem("更换图片");
+        imgPopMenu.add(mChange);
+        mChange.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changePic();
+            }
+        });
+        mStore = new JMenuItem("打开表情包商店");
+        mStore.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                picsChooser();
+            }
+        });
+        imgPopMenu.add(mStore);
 
         imgLabel.addMouseListener(new MouseListener() {
             @Override
@@ -107,11 +160,14 @@ public class MemexFrame extends JPanel
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    imgPopMenu.show(imgLabel, e.getX(), e.getY());
+                }
             }
 
             @Override
-            public void mouseReleased(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
             }
 
             @Override
@@ -122,7 +178,6 @@ public class MemexFrame extends JPanel
             public void mouseExited(MouseEvent e) {
             }
         });
-
 
         //设置img标签的边距
         //TODO 需要用SpringLayout给imgPanel一个margin
@@ -160,9 +215,14 @@ public class MemexFrame extends JPanel
         submit.addActionListener(this);
 
         textEditPanel.add(submit, BorderLayout.SOUTH);
-
-
         this.add(imgPanel, BorderLayout.NORTH);
+
+
+        //状态栏
+        statusbar = new JLabel("Status: Runing ! ");
+        statusbar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+        this.add(statusbar, BorderLayout.SOUTH);
+
         this.add(textEditPanel, BorderLayout.SOUTH);
     }
 
@@ -316,7 +376,7 @@ public class MemexFrame extends JPanel
     //打开表情模板选择器
     private void picsChooser() {
 
-        JFrame frame = new JFrame("请选择一个表情包图片");
+        frame = new JFrame("请选择一个表情包图片");
 
         //实例化由IDEA UIDesign 的Form文件
         ImageChooser imageChooser = new ImageChooser();
@@ -352,6 +412,7 @@ public class MemexFrame extends JPanel
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
+
 
 
 }

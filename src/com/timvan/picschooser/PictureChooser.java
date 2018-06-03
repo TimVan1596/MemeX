@@ -22,7 +22,7 @@
 
 +-----------------------------------------------------------------------------*/
 
-package src.com.picschooser;
+package src.com.timvan.picschooser;
 
 import javax.swing.JFileChooser;
 import java.io.File;

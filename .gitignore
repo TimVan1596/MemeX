@@ -70,5 +70,5 @@ pics/
 !/pics/
 "src/\347\206\212\347\214\253\344\272\272\344\270\215\345\261\221.jpg"
 !/src/icon.jpg
-/src/com/memexsql/JDBCUtil.java
-src/com/memexsql/JDBCUtil.rar
+/src/com/timvan/memexsql/JDBCUtil.java
+src/com/timvan/memexsql/JDBCUtil.rar

@@ -1,8 +1,6 @@
-package src.com.memexsql;
+package src.com.timvan.memexsql;
 
-import src.com.picschooser.ImageChooser;
-import src.com.picschooser.ImageProcess;
-
+import src.com.timvan.picschooser.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -69,7 +67,7 @@ public class InfoMysql {
     }
 
     //设置JTable的列名
-    private String[] columnNames = {"序号", "名称", "预览", "热度"};
+    private String[] columnNames = {"序号", "名称", "预览", "下载量"};
 
     public enum ColumnIndex {
         id(0), name(1), pic(2), times(3);

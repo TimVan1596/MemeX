@@ -1,12 +1,11 @@
-package src.com.picschooser;
+package src.com.timvan.picschooser;
 
-import src.com.memexsql.InfoMysql;
+import src.com.timvan.memexsql.InfoMysql;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 
 /**
  * @author TimVan
