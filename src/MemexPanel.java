@@ -24,7 +24,9 @@ public class MemexPanel extends JPanel
      * versionInfo 当前版本号
      * releaseDate  发布日期
      */
-
+    private static final String versionInfo = "v0.4";
+    private static final String releaseDate =
+            "2018年6月3日21:49:55";
 
 
     /**
@@ -45,8 +47,7 @@ public class MemexPanel extends JPanel
     int scaleWidth = 0;
     int scaleHeight = 0;
 
-    //主窗口
-    private JFrame frame;
+
     private JTextPane textPane;
     private File openFile;
     private JLabel imgLabel;
@@ -57,12 +58,12 @@ public class MemexPanel extends JPanel
     //状态栏显示信息
     private String statusBarString;
     //图片右键菜单
-    JMenuItem mCopy, mChange, mStore;
+    private JMenuItem mCopy, mChange, mStore;
     //创建一个菜单栏
-    JMenuBar menuBar;
+    protected JMenuBar menuBar;
 
 
-    public void changePicByUrl(String url) {
+    private void changePicByUrl(String url) {
 
 //        JOptionPane.showMessageDialog(null,
 //                "fuck", url, 0);
@@ -81,7 +82,7 @@ public class MemexPanel extends JPanel
         imgLabel.setIcon(image);
     }
 
-    public MemexPanel() {
+     public MemexPanel(JFrame frame) {
         super(new BorderLayout());
 
 
@@ -91,6 +92,69 @@ public class MemexPanel extends JPanel
 
         /* 操作面板（包括MenuBar和点击进入商店按钮） */
         JPanel operatePanel = new JPanel(new BorderLayout());
+        /*MenuBar 菜单栏*/
+        //创建一个菜单栏
+        JMenuBar menuBar = new JMenuBar();
+        JMenu settingMenu = new JMenu("设置");
+        //菜单栏中的“编辑”一级菜单
+        JMenu editMenu = new JMenu("编辑");
+
+        // 一级菜单添加到菜单栏
+        menuBar.add(editMenu);
+        menuBar.add(settingMenu);
+
+
+        JMenuItem helpMenu = new JMenuItem("帮助教程");
+        helpMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String filePath = System.getProperty("java.class.path");
+                //得到当前操作系统的分隔符，windows下是";",linux下是":"
+                String pathSplit = System.getProperty("path.separator");
+                /**
+                 * 若没有其他依赖，则filePath的结果应当是该可运行jar包的绝对路径，
+                 * 此时我们只需要经过字符串解析，便可得到jar所在目录
+                 */
+                if(filePath.contains(pathSplit)){
+                    filePath = filePath.substring(0,filePath.indexOf(pathSplit));
+                }else if (filePath.endsWith(".jar")) {//截取路径中的jar包名,可执行jar包运行的结果里包含".jar"
+                    filePath = filePath.substring(0, filePath.lastIndexOf(File.separator) + 1);
+                }
+
+                String path =filePath+"/使用教程.png";
+
+                try {
+                    //打开“帮助教程”图片
+                    if (ImageProcess.isLinux()) {
+                        Runtime.getRuntime().exec("sh nautilus "
+                                + path);
+                    } else {
+                        System.out.println(path);
+                        Runtime.getRuntime().exec("cmd /c "+path);
+                    }
+                }
+                catch (IOException ie){
+                    ie.printStackTrace();
+                }
+
+            }
+        });
+        JMenuItem aboutMenu = new JMenuItem("关于");
+        aboutMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame,
+                        "版本号:" + versionInfo + "\n" +
+                                "发布时间:" + releaseDate + "\n" +
+                                "开发团队：我在芜湖玩Java\n",
+                        "关于", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        settingMenu.add(helpMenu);
+        settingMenu.add(aboutMenu);
+
 
 
         /*点击表情包商店*/
@@ -150,21 +214,30 @@ public class MemexPanel extends JPanel
 //        editMenu.add(mCopy);
 //        editMenu.add(mStore);
 //        editMenu.add(mChange);
-
+        editMenu.add(mCopy);
+        editMenu.add(mChange);
+        editMenu.add(mStore);
+        frame.setJMenuBar(menuBar);
 
 
         imgLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 //picsChooser();
-                changePic();
+                if (e.isPopupTrigger()) {
+                    imgPopMenu.show(imgLabel, e.getX(), e.getY());
+                }
+                else {
+                    JOptionPane.showMessageDialog(null,
+                            "ada","sad",JOptionPane.WARNING_MESSAGE);
+                    changePic();
+
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    imgPopMenu.show(imgLabel, e.getX(), e.getY());
-                }
+
             }
 
             @Override
@@ -433,7 +506,7 @@ public class MemexPanel extends JPanel
 //        }
 
 
-        frame = new JFrame("请选择一个表情包图片");
+         JFrame frame = new JFrame("请选择一个表情包图片");
 
         //实例化由IDEA UIDesign 的Form文件
         ImageChooser imageChooser = new ImageChooser();
