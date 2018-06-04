@@ -1,5 +1,6 @@
 package src;
 
+import src.com.timvan.memexsql.JDBCUtil;
 import src.com.timvan.picschooser.*;
 import src.com.timvan.memexsql.*;
 
@@ -14,7 +15,13 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import static src.com.timvan.memexutil.MemexConstants.RealeseInfos.*;
+import static src.com.timvan.memexutil.MemexConstants.StatusBarString.FINISH_STATUS_BAR_STRING;
+import static src.com.timvan.memexutil.MemexConstants.StatusBarString.INIT_STATUS_BAR_STRING;
+import static src.com.timvan.memexutil.MemexConstants.StatusBarString.WAIT_FOR_STORE_STRING;
+
 /**
+ * 作为主界面MemeX的主面板方法，各控件在此绘制
  * @author TimVan
  */
 public class MemexPanel extends JPanel
@@ -24,10 +31,6 @@ public class MemexPanel extends JPanel
      * versionInfo 当前版本号
      * releaseDate  发布日期
      */
-    private static final String versionInfo = "v0.4";
-    private static final String releaseDate =
-            "2018年6月3日21:49:55";
-
 
     /**
      * textPane 用户输入的表情包文字
@@ -65,9 +68,6 @@ public class MemexPanel extends JPanel
 
     private void changePicByUrl(String url) {
 
-//        JOptionPane.showMessageDialog(null,
-//                "fuck", url, 0);
-
         String address = ImageProcess.saveToFile(url);
 
         openFile = new File(address);
@@ -82,7 +82,7 @@ public class MemexPanel extends JPanel
         imgLabel.setIcon(image);
     }
 
-     public MemexPanel(JFrame frame) {
+    public MemexPanel(JFrame frame) {
         super(new BorderLayout());
 
 
@@ -90,14 +90,12 @@ public class MemexPanel extends JPanel
         JPanel imgPanel = new JPanel();
         imgPanel.setLayout(new BorderLayout());
 
-        /* 操作面板（包括MenuBar和点击进入商店按钮） */
-        JPanel operatePanel = new JPanel(new BorderLayout());
         /*MenuBar 菜单栏*/
         //创建一个菜单栏
         JMenuBar menuBar = new JMenuBar();
-        JMenu settingMenu = new JMenu("设置");
+        JMenu settingMenu = new JMenu("      设 置      ");
         //菜单栏中的“编辑”一级菜单
-        JMenu editMenu = new JMenu("编辑");
+        JMenu editMenu = new JMenu("      编 辑      ");
 
         // 一级菜单添加到菜单栏
         menuBar.add(editMenu);
@@ -118,7 +116,8 @@ public class MemexPanel extends JPanel
                  */
                 if(filePath.contains(pathSplit)){
                     filePath = filePath.substring(0,filePath.indexOf(pathSplit));
-                }else if (filePath.endsWith(".jar")) {//截取路径中的jar包名,可执行jar包运行的结果里包含".jar"
+                }else if (filePath.endsWith(".jar")) {
+                    //截取路径中的jar包名,可执行jar包运行的结果里包含".jar"
                     filePath = filePath.substring(0, filePath.lastIndexOf(File.separator) + 1);
                 }
 
@@ -145,9 +144,16 @@ public class MemexPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(frame,
-                        "版本号:" + versionInfo + "\n" +
-                                "发布时间:" + releaseDate + "\n" +
-                                "开发团队：我在芜湖玩Java\n",
+                        "                              "
+                                +SOFT_NAME_EN+
+                                " - " + SOFT_NAME_CN + "\n"
+                                + "版本号: "
+                                + versionInfo + "\n" +
+                                "发布时间: d"
+                                + releaseDate + "\n" +
+                                "开发团队：我在芜湖玩Java\n\n"
+                        +"本页面的软件遵照GPL-3.0协议开放源代码\n"
+                        +"GitHub 地址 ：https://github.com/TimVan1596/MemeX\n",
                         "关于", JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -158,9 +164,13 @@ public class MemexPanel extends JPanel
 
 
         /*点击表情包商店*/
-        JButton storeBTN = new JButton("表情包商店");
-        storeBTN.setFont(new Font("黑体", Font.BOLD, 18));
-        storeBTN.setPreferredSize(new Dimension(10, 30));
+        JButton storeBTN = new JButton("打开表情包商店");
+        // 设置前景/字体颜色
+        storeBTN.setForeground(Color.white);
+        //设置背景颜色
+        storeBTN.setBackground(new Color(86, 119, 252));
+        storeBTN.setFont(new Font("黑体", Font.BOLD, 19));
+        storeBTN.setPreferredSize(new Dimension(10, 35));
         storeBTN.setActionCommand("storeBTN");
         storeBTN.addActionListener(this);
 
@@ -204,40 +214,82 @@ public class MemexPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e) {
                 //切换状态栏内容
-                statusBarString = "加载需要一点时间，优化成这样你还想让我怎样";
-                statusBar.setText(statusBarString);
+                statusBar.setText(WAIT_FOR_STORE_STRING);
                 picsChooser();
             }
         });
         imgPopMenu.add(mStore);
 
-//        editMenu.add(mCopy);
-//        editMenu.add(mStore);
-//        editMenu.add(mChange);
-        editMenu.add(mCopy);
-        editMenu.add(mChange);
-        editMenu.add(mStore);
+
+        JMenuItem mShowInExplore = new JMenuItem("在文件夹中打开");
+        mShowInExplore.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                        JOptionPane.showMessageDialog(null,
+                "功能即将推出", "提示", 0);
+            }
+        });
+        imgPopMenu.add(mShowInExplore);
+
+
+        JMenuItem editMenuCopy = new JMenuItem("复制到剪切板");
+        editMenuCopy.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ImageIcon icon = (ImageIcon) imgLabel.getIcon();
+                ImageProcess.CopyToClipboard(icon.getImage());
+            }
+        });
+
+        JMenuItem editMenuChange = new JMenuItem("更换图片");
+        editMenuChange.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changePic();
+            }
+        });
+
+        JMenuItem editMenuStore = new JMenuItem("打开表情包商店");
+        editMenuStore.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //切换状态栏内容
+                statusBar.setText(WAIT_FOR_STORE_STRING);
+                picsChooser();
+            }
+        });
+
+        JMenuItem editMenuShowInExplore = new JMenuItem("打开表情包所在文件夹");
+        editMenuShowInExplore.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null,
+                        "功能即将推出", "提示", 0);
+            }
+        });
+
+        editMenu.add(editMenuCopy);
+        editMenu.add(editMenuChange);
+        editMenu.add(editMenuStore);
+        editMenu.add(editMenuShowInExplore);
         frame.setJMenuBar(menuBar);
 
 
         imgLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //picsChooser();
-                if (e.isPopupTrigger()) {
-                    imgPopMenu.show(imgLabel, e.getX(), e.getY());
-                }
-                else {
-                    JOptionPane.showMessageDialog(null,
-                            "ada","sad",JOptionPane.WARNING_MESSAGE);
+                if(e.getButton() == MouseEvent.BUTTON1)
+                {
                     changePic();
-
+                }
+                else if(e.getButton() == MouseEvent.BUTTON3)
+                {
+                    imgPopMenu.show(imgLabel, e.getX(), e.getY());
                 }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-
             }
 
             @Override
@@ -252,6 +304,7 @@ public class MemexPanel extends JPanel
             public void mouseExited(MouseEvent e) {
             }
         });
+
 
         //设置img标签的边距
         //TODO 需要用SpringLayout给imgPanel一个margin
@@ -283,15 +336,19 @@ public class MemexPanel extends JPanel
 
         /*生成按钮*/
         JButton submit = new JButton("生成表情包！");
-        submit.setFont(new Font("黑体", Font.BOLD, 18));
+        // 设置前景/字体颜色
+        submit.setForeground(Color.white);
+        //设置背景颜色
+        submit.setBackground(new Color(86, 119, 252));
+        submit.setFont(new Font("黑体", Font.BOLD, 22));
         submit.setPreferredSize(new Dimension(50, 60));
         submit.setActionCommand("submit");
         submit.addActionListener(this);
 
         //状态栏
-        statusBarString = "点击中间表情包可切换本地图片，右键有惊喜";
-        statusBar = new JLabel(statusBarString);
+        statusBar = new JLabel(INIT_STATUS_BAR_STRING);
         statusBar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+        statusBar.setFont(new Font("黑体", Font.PLAIN, 14));
 
         //完成面板，textEditPanel的子Panel
         JPanel finishPanel = new JPanel(new BorderLayout());
@@ -313,14 +370,12 @@ public class MemexPanel extends JPanel
             case "submit":
                 summitCommend();
                 //切换状态栏内容
-                statusBarString = "表情包已复制到剪切板，您可以直接粘贴；新图片保存在桌面";
-                statusBar.setText(statusBarString);
+                statusBar.setText(FINISH_STATUS_BAR_STRING);
                 break;
             case "storeBTN":
                 //打开表情包商店
                 //切换状态栏内容
-                statusBarString = "加载需要一点时间，优化成这样你还想让我怎样";
-                statusBar.setText(statusBarString);
+                statusBar.setText(WAIT_FOR_STORE_STRING);
                 picsChooser();
                 //changePic();
                 break;
@@ -329,105 +384,6 @@ public class MemexPanel extends JPanel
 
     }
 
-    //实例输入：Width
-    //我想卖可乐
-    //你到底是要卖一辈子糖水还是要跟我一起改变世界
-    //你到底是要卖一辈子糖水还是要跟我一起改变世界。不，我只想卖可口可乐
-
-//    /**
-//     * 创建GUI
-//     */
-//    private  void createAndShowGUI() {
-//        //Create and set up the window.
-//        JFrame frame = new JFrame("MemeX - 斗图神器 " + versionInfo);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//
-//
-//        //Create and set up the content pane.
-//        JComponent newContentPane = new MemexPanel();
-//        newContentPane.setOpaque(true);
-//        frame.setContentPane(newContentPane);
-//
-//        //使用Toolkit设置图标
-//        Toolkit tk = Toolkit.getDefaultToolkit();
-//        Image image = tk.createImage("icon.jpg");
-//        frame.setIconImage(image);
-//
-//
-//
-//        /*MenuBar 菜单栏*/
-//        //创建一个菜单栏
-//        menuBar = new JMenuBar();
-//        JMenu settingMenu = new JMenu("设置");
-//        //菜单栏中的“编辑”一级菜单
-//        JMenu editMenu = new JMenu("编辑");
-//
-//        // 一级菜单添加到菜单栏
-//        menuBar.add(editMenu);
-//        menuBar.add(settingMenu);
-//
-//
-//        JMenuItem helpMenu = new JMenuItem("帮助教程");
-//        helpMenu.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//
-//                String filePath = System.getProperty("java.class.path");
-//                //得到当前操作系统的分隔符，windows下是";",linux下是":"
-//                String pathSplit = System.getProperty("path.separator");
-//                /**
-//                 * 若没有其他依赖，则filePath的结果应当是该可运行jar包的绝对路径，
-//                 * 此时我们只需要经过字符串解析，便可得到jar所在目录
-//                 */
-//                if(filePath.contains(pathSplit)){
-//                    filePath = filePath.substring(0,filePath.indexOf(pathSplit));
-//                }else if (filePath.endsWith(".jar")) {//截取路径中的jar包名,可执行jar包运行的结果里包含".jar"
-//                    filePath = filePath.substring(0, filePath.lastIndexOf(File.separator) + 1);
-//                }
-//
-//                String path =filePath+"/使用教程.png";
-//
-//                try {
-//                    //打开“帮助教程”图片
-//                    if (ImageProcess.isLinux()) {
-//                        Runtime.getRuntime().exec("sh nautilus "
-//                                + path);
-//                    } else {
-//                        System.out.println(path);
-//                        Runtime.getRuntime().exec("cmd /c "+path);
-//                    }
-//                }
-//                catch (IOException ie){
-//                    ie.printStackTrace();
-//                }
-//
-//            }
-//        });
-//        JMenuItem aboutMenu = new JMenuItem("关于");
-//        aboutMenu.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                JOptionPane.showMessageDialog(frame,
-//                        "版本号:" + versionInfo + "\n" +
-//                                "发布时间:" + releaseDate + "\n" +
-//                                "开发团队：我在芜湖玩Java\n",
-//                        "关于", JOptionPane.INFORMATION_MESSAGE);
-//            }
-//        });
-//
-//        settingMenu.add(helpMenu);
-//        settingMenu.add(aboutMenu);
-//
-//        frame.setJMenuBar(menuBar);
-//
-//
-//        //Display the window.
-//        frame.pack();
-//        frame.setVisible(true);
-//        //窗口在屏幕中间显示
-//        frame.setLocationRelativeTo(null);
-//    }
-//
 
     /**
      * 生成图片事件
@@ -505,8 +461,7 @@ public class MemexPanel extends JPanel
 //            ie.printStackTrace();
 //        }
 
-
-         JFrame frame = new JFrame("请选择一个表情包图片");
+        JFrame frame = new JFrame("请选择一个表情包图片");
 
         //实例化由IDEA UIDesign 的Form文件
         ImageChooser imageChooser = new ImageChooser();
@@ -525,21 +480,52 @@ public class MemexPanel extends JPanel
             public void actionPerformed(ActionEvent e) {
 
                 int row = imageTable.getSelectedRow();
-                //增加热度
-                int id = (int) imageTable.getValueAt(row, 0);
-                JDBCUtil.updatePicsTimes(id);
-
                 //获取点击中的URL
                 int column = 2;
-                String URL = (String) imageTable.getValueAt(row, column);
-                changePicByUrl(URL);
+                String URL = (String) imageTable.
+                        getValueAt(row, column);
+                column = 1;
+                //获取到的表情包名称（PlaceHolder）
+                String placeHolder = (String)imageTable.
+                        getValueAt(row,column);
+                textPane.setText(placeHolder);
+
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //改变图片
+                        changePicByUrl(URL);
+                    }
+                });
+
+//                try {
+//                    thread.start();
+//                    //thread.join();
+//                }
+//                catch (InterruptedException ie){
+//                    ie.printStackTrace();
+//                }
+                thread.start();
+
+                //增加热度
+                int id = Integer.parseInt(
+                        (String) imageTable.
+                                getValueAt(row, 0));
+                JDBCUtil.updatePicsTimes(id);
+
                 frame.dispose();
+
+
             }
         });
 
         frame.setSize(new Dimension(800, 500));
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        //使用Toolkit设置图标
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Image image = tk.createImage("icon.jpg");
+        frame.setIconImage(image);
         frame.setVisible(true);
     }
 

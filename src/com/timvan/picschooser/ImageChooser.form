@@ -22,7 +22,7 @@
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="South"/>
         <properties>
-          <background color="-16747063"/>
+          <background color="-11110404"/>
           <minimumSize width="50" height="80"/>
           <preferredSize width="24" height="80"/>
         </properties>
@@ -33,10 +33,10 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="6" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="20"/>
+              <font size="24" style="1"/>
               <foreground color="-3877926"/>
               <name value="imageInfo"/>
-              <text value="表情包信息"/>
+              <text value="表情包商店"/>
             </properties>
           </component>
           <component id="77706" class="javax.swing.JButton" binding="okButton">

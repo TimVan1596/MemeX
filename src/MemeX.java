@@ -1,13 +1,11 @@
 package src;
 
-import src.com.timvan.picschooser.ImageProcess;
-
+import src.com.timvan.memexutil.MemexConstants;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+
+import static src.com.timvan.memexutil.MemexConstants.RealeseInfos.SOFT_NAME_CN;
+import static src.com.timvan.memexutil.MemexConstants.RealeseInfos.SOFT_NAME_EN;
 
 /**
  * @author TimVan
@@ -15,17 +13,14 @@ import java.io.IOException;
  */
 public class MemeX {
 
-    private static final String versionInfo = "v0.4";
-    private static final String releaseDate =
-            "2018年6月3日21:49:55";
-
-
     /**
      * 创建GUI
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("MemeX - 斗图神器 " + versionInfo);
+        JFrame frame = new JFrame( SOFT_NAME_CN+
+                " - " + SOFT_NAME_EN +"     "
+                + MemexConstants.RealeseInfos.versionInfo);
         //Create and set up the content pane.
         MemexPanel memexPanel = new MemexPanel(frame);
 
@@ -40,9 +35,6 @@ public class MemeX {
         Toolkit tk = Toolkit.getDefaultToolkit();
         Image image = tk.createImage("icon.jpg");
         frame.setIconImage(image);
-
-
-
 
 
         //Display the window.

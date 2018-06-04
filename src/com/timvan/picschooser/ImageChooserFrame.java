@@ -17,7 +17,11 @@ public class ImageChooserFrame  {
 
     }
 
+    //获取到的表情包URL
     public static String URL;
+    //获取到的表情包名称（PlaceHolder）
+    public static String name;
+
     //创建图形界面
     public void createGUI(){
         JFrame frame = new JFrame("请选择一个表情包图片");
@@ -39,7 +43,8 @@ public class ImageChooserFrame  {
                 //获取点击中的URL
                 int column = imageTable.getSelectedColumn();
                 int row =  imageTable.getSelectedRow();
-                URL = (String)imageTable.getValueAt(row,column);
+//                URL = (String)imageTable.getValueAt(row,2);
+//                name = (String)imageTable.getValueAt(row,1);
                 frame.dispose();
             }
         });

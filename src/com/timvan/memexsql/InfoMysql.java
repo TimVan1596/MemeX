@@ -26,13 +26,21 @@ public class InfoMysql {
         //获取窗口
         this.imageChooser = imageChooser;
 
-        JTable imageTable = new JTable(JDBCUtil.getPicsInfo(), columnNames) {
+        Object[][] realObject = JDBCUtil.getPicsInfo();
+
+
+        // 新建一个默认数据模型
+        DefaultTableModel model = new DefaultTableModel(realObject
+                ,columnNames);
+
+        JTable imageTable = new JTable() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 //表格不允许被编辑，但可以选中
                 return false;
             }
         };
+        imageTable.setModel(model);
 
         TableCellRenderer tcr = new ColorTableCellRenderer();
         // 让内容居中
@@ -66,11 +74,13 @@ public class InfoMysql {
 
     }
 
-    //设置JTable的列名
-    private String[] columnNames = {"序号", "名称", "预览", "下载量"};
+    /**
+     *设置JTable的列名
+     */
+    private String[] columnNames = {"图号", "名称", "预览", "下载量","UP主"};
 
     public enum ColumnIndex {
-        id(0), name(1), pic(2), times(3);
+        id(0), name(1), pic(2), times(3),author(4);
 
         private final int index;
 

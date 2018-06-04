@@ -24,8 +24,6 @@ import java.net.URL;
 public class ImageProcess {
 
 
-
-
     /**
      * 判断是linux系统还是其他系统
      * 如果是Linux系统，返回true，否则返回false
@@ -58,12 +56,14 @@ public class ImageProcess {
 
         //若原图的宽小于控件宽
         if (imgWidth < conWidth) {
-            if (imgHeight < conHeight) {
+            if (imgHeight < conHeight && imgWidth >= imgHeight) {
                 reImgWidth = conWidth * SMALL_SCALE;
                 reImgHeight = reImgWidth / imgRatio;
             } else {
+
                 reImgHeight = conHeight * SMALL_SCALE;
                 reImgWidth = reImgHeight * imgRatio;
+
             }
         }
         //若原图的宽大于控件宽
@@ -166,16 +166,20 @@ public class ImageProcess {
 
     //复制图片到剪切板
     public static void CopyToClipboard(final Image image) {
-        Transferable trans = new Transferable(){
+        Transferable trans = new Transferable() {
+            @Override
             public DataFlavor[] getTransferDataFlavors() {
-                return new DataFlavor[] { DataFlavor.imageFlavor };
+                return new DataFlavor[]{DataFlavor.imageFlavor};
             }
+            @Override
             public boolean isDataFlavorSupported(DataFlavor flavor) {
                 return DataFlavor.imageFlavor.equals(flavor);
             }
+            @Override
             public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-                if(isDataFlavorSupported(flavor))
+                if (isDataFlavorSupported(flavor)){
                     return image;
+                }
                 throw new UnsupportedFlavorException(flavor);
             }
 
