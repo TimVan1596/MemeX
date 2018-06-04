@@ -23,6 +23,9 @@ import java.net.URL;
  */
 public class ImageProcess {
 
+
+
+
     /**
      * 判断是linux系统还是其他系统
      * 如果是Linux系统，返回true，否则返回false
@@ -274,15 +277,15 @@ public class ImageProcess {
             is.close();
             os.close();
 
-            //打开产生图片的文件夹，判断是否是Linux
-            if (isLinux() == true) {
-                Runtime.getRuntime().exec("sh nautilus "
-                        + path + "/MemeX表情包");
-            } else {
-                System.out.println(path);
-                Runtime.getRuntime().exec("cmd /c start explorer "
-                        + path + "\\MemeX表情包");
-            }
+//因可以直接复制，故取消   //打开产生图片的文件夹，判断是否是Linux
+//            if (isLinux() == true) {
+//                Runtime.getRuntime().exec("sh nautilus "
+//                        + path + "/MemeX表情包");
+//            } else {
+//                System.out.println(path);
+//                Runtime.getRuntime().exec("cmd /c start explorer "
+//                        + path + "\\MemeX表情包");
+//            }
 
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
