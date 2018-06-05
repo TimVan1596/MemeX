@@ -16,8 +16,10 @@ public class InfoMysql {
     /**
      * imageChooser 获取到的选择界面
      * ROW_HEIGHT   固定行高
+     * realObject 从数据中传输的真实表格数据（附带预览图）
      */
     private ImageChooser imageChooser;
+    private Object[][] realObject;
     private final static int ROW_HEIGHT = 140;
 
     /**获取线上模板图片的JTable
@@ -26,12 +28,13 @@ public class InfoMysql {
         //获取窗口
         this.imageChooser = imageChooser;
 
-        Object[][] realObject = JDBCUtil.getPicsInfo();
+        realObject = JDBCUtil.getPicsInfo();
+        Object [][] showObject = new Object[10][5];
 
 
         // 新建一个默认数据模型
-        DefaultTableModel model = new DefaultTableModel(realObject
-                ,columnNames);
+        DefaultTableModel model = new DefaultTableModel(
+                showObject , columnNames);
 
         JTable imageTable = new JTable() {
             @Override
@@ -77,10 +80,11 @@ public class InfoMysql {
     /**
      *设置JTable的列名
      */
-    private String[] columnNames = {"图号", "名称", "预览", "下载量","UP主"};
+    private String[] columnNames = {"图号", "名称", "预览"
+            , "下载量","UP主"};
 
     public enum ColumnIndex {
-        id(0), name(1), pic(2), times(3),author(4);
+        id(0), name(1), pic(2), times(3),author(4),preview(5);
 
         private final int index;
 
@@ -123,9 +127,10 @@ public class InfoMysql {
         public Component getTableCellRendererComponent(
                 JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
-            if (column  == ColumnIndex.pic.getIndex()) {
+            if (column  == ColumnIndex.preview.getIndex()) {
                 //获取图片的URL
-                String URL = (String) table.getValueAt(row,column);
+                //String URL = (String) table.getValueAt(row,column);
+                String URL = (String) realObject[row][column];
                 if (URL != null){
                     ImageIcon img = new ImageIcon(
                             ImageProcess.getImageBufferStream(URL));
