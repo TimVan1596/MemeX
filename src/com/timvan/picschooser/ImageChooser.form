@@ -28,17 +28,6 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="e95fd" class="javax.swing.JLabel" binding="imageInfo">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="6" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font size="24" style="1"/>
-              <foreground color="-3877926"/>
-              <name value="imageInfo"/>
-              <text value="表情包商店"/>
-            </properties>
-          </component>
           <component id="77706" class="javax.swing.JButton" binding="okButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="21" use-parent-layout="false">
@@ -60,6 +49,39 @@
               <text value="确   定"/>
             </properties>
           </component>
+          <grid id="431ba" binding="infoPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-11110404"/>
+            </properties>
+            <clientProperties>
+              <html.disable class="java.lang.Boolean" value="false"/>
+            </clientProperties>
+            <border type="none"/>
+            <children>
+              <component id="f5729" class="javax.swing.JLabel" binding="infoLabel">
+                <constraints border-constraint="North"/>
+                <properties>
+                  <font size="28" style="1"/>
+                  <foreground color="-2627345"/>
+                  <horizontalAlignment value="0"/>
+                  <text value="表情包商店"/>
+                </properties>
+              </component>
+              <component id="31728" class="javax.swing.JLabel" binding="helpTips">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <font size="14" style="2"/>
+                  <horizontalAlignment value="0"/>
+                  <text value=" 如何成为一名UP主？"/>
+                  <verticalAlignment value="0"/>
+                  <verticalTextPosition value="1"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
     </children>

@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: mysql-connector-java-8.0.11.jar forms_rt.jar
-Main-Class: src.MemexPanel
+Class-Path: mysql-connector-java-8.0.11.jar forms_rt.jar mysql-connect
+ or-java-8.0.11.jar
+Main-Class: src.MemeX
 

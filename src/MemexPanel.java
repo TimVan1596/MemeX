@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -19,6 +20,7 @@ import static src.com.timvan.memexutil.MemexConstants.RealeseInfos.*;
 import static src.com.timvan.memexutil.MemexConstants.StatusBarString.FINISH_STATUS_BAR_STRING;
 import static src.com.timvan.memexutil.MemexConstants.StatusBarString.INIT_STATUS_BAR_STRING;
 import static src.com.timvan.memexutil.MemexConstants.StatusBarString.WAIT_FOR_STORE_STRING;
+import static src.com.timvan.picschooser.ImageProcess.isLinux;
 
 /**
  * 作为主界面MemeX的主面板方法，各控件在此绘制
@@ -125,7 +127,7 @@ public class MemexPanel extends JPanel
 
                 try {
                     //打开“帮助教程”图片
-                    if (ImageProcess.isLinux()) {
+                    if (isLinux()) {
                         Runtime.getRuntime().exec("sh nautilus "
                                 + path);
                     } else {
@@ -225,8 +227,40 @@ public class MemexPanel extends JPanel
         mShowInExplore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null,
-                "功能即将推出", "提示", 0);
+
+                //获取桌面路径
+                FileSystemView fsv = FileSystemView.getFileSystemView();
+                //读取桌面路径
+                File com = fsv.getHomeDirectory();
+                String path = com.getPath();
+                //更改最终返回的表情路径
+
+                File dirFile = new File(path + "/MemeX表情包");
+                //无则创建
+                boolean bFile = dirFile.exists();
+                if (bFile == false) {
+                    dirFile.mkdir();
+                }
+
+
+                try{
+                    //打开产生图片的文件夹，判断是否是Linux
+                    if (isLinux()) {
+                        Runtime.getRuntime().exec("sh nautilus "
+                                + path + "/MemeX表情包");
+                    } else {
+                        System.out.println(path);
+                        Runtime.getRuntime().exec("cmd /c start explorer "
+                                + path + "\\MemeX表情包");
+                    }
+
+                }
+                catch (IOException ie){
+                    ie.printStackTrace();
+                }
+
+
+
             }
         });
         imgPopMenu.add(mShowInExplore);
@@ -263,8 +297,31 @@ public class MemexPanel extends JPanel
         editMenuShowInExplore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null,
-                        "功能即将推出", "提示", 0);
+
+                //获取桌面路径
+                FileSystemView fsv = FileSystemView.getFileSystemView();
+                //读取桌面路径
+                File com = fsv.getHomeDirectory();
+                String path = com.getPath();
+                //更改最终返回的表情路径
+                try{
+                    //打开产生图片的文件夹，判断是否是Linux
+                    if (isLinux()) {
+                        Runtime.getRuntime().exec("sh nautilus "
+                                + path + "/MemeX表情包");
+                    } else {
+                        System.out.println(path);
+                        Runtime.getRuntime().exec("cmd /c start explorer "
+                                + path + "\\MemeX表情包");
+                    }
+
+                }
+                catch (IOException ie){
+                    ie.printStackTrace();
+                }
+
+
+
             }
         });
 

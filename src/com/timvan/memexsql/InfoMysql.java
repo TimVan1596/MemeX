@@ -18,18 +18,30 @@ public class InfoMysql {
      * ROW_HEIGHT   固定行高
      * realObject 从数据中传输的真实表格数据（附带预览图）
      */
-    private ImageChooser imageChooser;
-    private Object[][] realObject;
+    public Object[][] realObject;
     private final static int ROW_HEIGHT = 140;
+    private final static int ROW_WIDTH = 140;
 
-    /**获取线上模板图片的JTable
+    /**获取线上模板图片的JTable数据，与Mysql沟通
+     * 传入的iimageChooser是表情包商店的panel，可以直接操作
      * */
     public JTable getMemesJTable(ImageChooser imageChooser) {
         //获取窗口
-        this.imageChooser = imageChooser;
 
         realObject = JDBCUtil.getPicsInfo();
-        Object [][] showObject = new Object[10][5];
+        //用来在JTable上展示的容器（去掉URL这一列）
+        //URL这一列是真实下载下来的图片，preview是预览图带文字
+        final int col = realObject.length;
+
+        Object [][] showObject = new Object[col][5];
+
+        //将realObject拷贝到showObject
+        for (int i = 0; i < showObject.length; i++) {
+            for (int j = 0; j < showObject[i].length; j++) {
+                //将原URL列填充为预览列
+                showObject[i][j] = realObject[i][j];
+            }
+        }
 
 
         // 新建一个默认数据模型
@@ -59,11 +71,6 @@ public class InfoMysql {
         imageTable.getTableHeader().setFont(
                 new Font("黑体", Font.BOLD, 23));
 
-        // 设置内容居中
-//        DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
-//        tcr.setHorizontalAlignment(SwingConstants.CENTER);
-//        imageTable.setDefaultRenderer(Object.class, tcr);
-
         //自动调整列宽
         resizeColumnWidth(imageTable);
         //设置行高
@@ -80,7 +87,7 @@ public class InfoMysql {
     /**
      *设置JTable的列名
      */
-    private String[] columnNames = {"图号", "名称", "预览"
+    private String[] columnNames = {"图号", "名称", "预览图"
             , "下载量","UP主"};
 
     public enum ColumnIndex {
@@ -88,7 +95,7 @@ public class InfoMysql {
 
         private final int index;
 
-        private ColumnIndex(int name) {
+        ColumnIndex(int name) {
             this.index = name;
         }
 
@@ -102,7 +109,7 @@ public class InfoMysql {
      * 自动调整JTable列宽度
      * src:https://cloud.tencent.com/developer/ask/84252
      */
-    public void resizeColumnWidth(JTable table) {
+    private void resizeColumnWidth(JTable table) {
         final TableColumnModel columnModel = table.getColumnModel();
         for (int column = 0; column < table.getColumnCount(); column++) {
             // Min width
@@ -127,26 +134,31 @@ public class InfoMysql {
         public Component getTableCellRendererComponent(
                 JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
-            if (column  == ColumnIndex.preview.getIndex()) {
+            //注意！这里pic其实是预览图
+            // TODO:历史遗留问题，需要解决
+            if (column  == ColumnIndex.pic.getIndex()) {
                 //获取图片的URL
                 //String URL = (String) table.getValueAt(row,column);
-                String URL = (String) realObject[row][column];
+                String URL = (String) realObject[row][ColumnIndex
+                        .preview.getIndex()];
                 if (URL != null){
                     ImageIcon img = new ImageIcon(
                             ImageProcess.getImageBufferStream(URL));
-                    img=new ImageIcon(img.getImage().getScaledInstance(
-                            ROW_HEIGHT, ROW_HEIGHT, Image.SCALE_DEFAULT));
+                    img=new ImageIcon(img.getImage().getScaledInstance(ROW_WIDTH, ROW_HEIGHT, Image.SCALE_DEFAULT));
                     return new JLabel(img);
                 }
 
-                ImageIcon img = new ImageIcon("pics/熊猫人不屑.jpg");
+                ImageIcon img = new ImageIcon(
+                        "pics/熊猫人不屑.jpg");
                 img.setImage(img.getImage().getScaledInstance(
-                        ROW_HEIGHT,ROW_HEIGHT,Image.SCALE_DEFAULT));
+                        ROW_WIDTH,ROW_HEIGHT,Image.SCALE_DEFAULT));
                 return new JLabel(img);
 
 
             } else {
-                return super.getTableCellRendererComponent(table, value, isSelected,hasFocus, row, column);            }
+                return super.getTableCellRendererComponent(table
+                        ,value, isSelected
+                        ,hasFocus, row, column);            }
         }
 
         @Override

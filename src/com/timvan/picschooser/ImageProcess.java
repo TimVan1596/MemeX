@@ -114,11 +114,21 @@ public class ImageProcess {
             bis = new BufferedInputStream(httpUrl.getInputStream());
 
         } catch (IOException e) {
-        } catch (ClassCastException e) {
-        } finally {
+            e.printStackTrace();
+        }finally {
             try {
                 //读入图片
-                BufferedImage buffImg = ImageIO.read(bis);
+
+                BufferedImage buffImg = null;
+                if (bis == null){
+
+                }
+                else {
+                    buffImg = ImageIO.read(bis);
+
+                }
+
+
                 bis.close();
                 httpUrl.disconnect();
                 return buffImg;
