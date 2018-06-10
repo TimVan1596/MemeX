@@ -218,6 +218,8 @@ public class ImageProcess {
             int strLenth = inputStr.length();
             //将会有几行
             int rowCount = strLenth / maxWordNums + 1;
+            //最后保存的表情的名称
+            String picTitle = "";
 
 
             //bufferedImage = 创建新的BufferedImage，高度随文字的行数改变
@@ -238,6 +240,8 @@ public class ImageProcess {
             graphics.setFont(new Font("黑体", Font.BOLD, 35));
 
 
+
+
             for (int i = 1; i <= rowCount; ++i) {
                 /**
                  *  xy为坐标
@@ -248,15 +252,28 @@ public class ImageProcess {
                 int x = 0, y = 0;
                 String everyRowStr = "";
                 StringBuffer stringBuffer = new StringBuffer();
+                if (i == 1){
+                    //为第一行创建标题字符流
+                    StringBuffer titleStringBuffer = new StringBuffer();
+                }
+
                 //判断是否是最后一行
                 int finish = i != rowCount ? (i) * maxWordNums : inputStr.length();
 
                 for (int j = (i - 1) * maxWordNums; j < finish; j++) {
-                    stringBuffer.append(inputStr.charAt(j));
+                    char cacheChar = inputStr.charAt(j);
+                    stringBuffer.append(cacheChar);
+
+
                 }
                 everyRowStr = stringBuffer.toString();
                 x = (imageWidth - WORD_WIDTH * (everyRowStr.length())) / 2;
                 y = FIRST_ROW_Y + (i - 1) * WORD_HEIGHT;
+
+                if (i == 1){
+                    //将第一行作为标题
+                    picTitle = stringBuffer.toString();
+                }
 
                 //绘制文字
                 graphics.drawString(everyRowStr, x, y);
@@ -275,13 +292,12 @@ public class ImageProcess {
             File dirFile = new File(path + "/MemeX表情包");
             //无则创建
             boolean bFile = dirFile.exists();
-            if (bFile == false) {
+            if (!bFile) {
                 dirFile.mkdir();
             }
 
 
             newMemePath = path + "/MemeX表情包/新表情.jpg";
-
             OutputStream os = new FileOutputStream(newMemePath);
             //将输出流写入图片中
             ImageIO.write(bufferedImage, "jpg", os);
@@ -290,16 +306,6 @@ public class ImageProcess {
 
             is.close();
             os.close();
-
-//因可以直接复制，故取消   //打开产生图片的文件夹，判断是否是Linux
-//            if (isLinux() == true) {
-//                Runtime.getRuntime().exec("sh nautilus "
-//                        + path + "/MemeX表情包");
-//            } else {
-//                System.out.println(path);
-//                Runtime.getRuntime().exec("cmd /c start explorer "
-//                        + path + "\\MemeX表情包");
-//            }
 
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
