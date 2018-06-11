@@ -16,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author TimVan
@@ -115,15 +117,14 @@ public class ImageProcess {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 //读入图片
 
                 BufferedImage buffImg = null;
-                if (bis == null){
+                if (bis == null) {
 
-                }
-                else {
+                } else {
                     buffImg = ImageIO.read(bis);
 
                 }
@@ -181,13 +182,15 @@ public class ImageProcess {
             public DataFlavor[] getTransferDataFlavors() {
                 return new DataFlavor[]{DataFlavor.imageFlavor};
             }
+
             @Override
             public boolean isDataFlavorSupported(DataFlavor flavor) {
                 return DataFlavor.imageFlavor.equals(flavor);
             }
+
             @Override
             public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-                if (isDataFlavorSupported(flavor)){
+                if (isDataFlavorSupported(flavor)) {
                     return image;
                 }
                 throw new UnsupportedFlavorException(flavor);
@@ -240,8 +243,6 @@ public class ImageProcess {
             graphics.setFont(new Font("黑体", Font.BOLD, 35));
 
 
-
-
             for (int i = 1; i <= rowCount; ++i) {
                 /**
                  *  xy为坐标
@@ -252,27 +253,21 @@ public class ImageProcess {
                 int x = 0, y = 0;
                 String everyRowStr = "";
                 StringBuffer stringBuffer = new StringBuffer();
-                if (i == 1){
-                    //为第一行创建标题字符流
-                    StringBuffer titleStringBuffer = new StringBuffer();
-                }
-
                 //判断是否是最后一行
                 int finish = i != rowCount ? (i) * maxWordNums : inputStr.length();
 
                 for (int j = (i - 1) * maxWordNums; j < finish; j++) {
                     char cacheChar = inputStr.charAt(j);
                     stringBuffer.append(cacheChar);
-
-
                 }
                 everyRowStr = stringBuffer.toString();
                 x = (imageWidth - WORD_WIDTH * (everyRowStr.length())) / 2;
                 y = FIRST_ROW_Y + (i - 1) * WORD_HEIGHT;
 
-                if (i == 1){
+                if (i == 1) {
                     //将第一行作为标题
                     picTitle = stringBuffer.toString();
+                    picTitle = trimStringFromAbnormal(picTitle);
                 }
 
                 //绘制文字
@@ -297,7 +292,7 @@ public class ImageProcess {
             }
 
 
-            newMemePath = path + "/MemeX表情包/新表情.jpg";
+            newMemePath = path + "/MemeX表情包/"+picTitle+".jpg";
             OutputStream os = new FileOutputStream(newMemePath);
             //将输出流写入图片中
             ImageIO.write(bufferedImage, "jpg", os);
@@ -321,6 +316,15 @@ public class ImageProcess {
             return newMemePath;
         }
 
+    }
+
+    /** 去除字符中的特殊字符（如符号等）
+     * */
+    public static String trimStringFromAbnormal(String str) {
+        String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(str);
+        return m.replaceAll("").trim();
     }
 
 }

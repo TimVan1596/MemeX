@@ -13,9 +13,9 @@ public interface MemexConstants {
 
         public static final String SOFT_NAME_CN = "斗图神器";
         public static final String SOFT_NAME_EN = "MemeX";
-        public static final String versionInfo = "v0.4";
+        public static final String versionInfo = "v0.5";
          public static final String releaseDate =
-                 "2018年06月05日01:05:29";
+                 "2018年6月11日16:54:12";
          public static final String authorName = "Tim Van";
 
     }

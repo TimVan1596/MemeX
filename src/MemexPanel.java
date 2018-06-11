@@ -7,6 +7,7 @@ import src.com.timvan.memexsql.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Hashtable;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -372,6 +373,44 @@ public class MemexPanel extends JPanel
         /*文字编辑区*/
         JPanel textEditPanel = new JPanel();
         textEditPanel.setLayout(new BorderLayout());
+
+        //具体操作区，如调整文字位置，颜色，大小
+        JPanel operatePane = new JPanel(new BorderLayout());
+        JButton jButton = new JButton("hello");
+
+
+        //-----------添加文字位置垂直的滑动条-----------
+        JPanel operateVerticalRowPane = new JPanel(new FlowLayout());
+        JLabel verticalTips = new JLabel("上下:");
+        JSlider verticalSlider = new JSlider();
+        //设置绘制刻度标签
+        verticalSlider.setPaintLabels(true);
+        Hashtable<Integer, Component> verticalLabelTable = new Hashtable<Integer, Component>();
+        verticalLabelTable.put(0, new JLabel("最上"));
+        verticalLabelTable.put(50, new JLabel("中间"));
+        verticalLabelTable.put(100, new JLabel("最下"));
+        verticalSlider.setLabelTable(verticalLabelTable);
+        operateVerticalRowPane.add(verticalTips);
+        operateVerticalRowPane.add(verticalSlider);
+
+        //-----------添加文字位置垂直的滑动条-----------
+        JPanel operateHorizenRowPane = new JPanel(new FlowLayout());
+        JLabel horizenTips = new JLabel("左右:");
+        JSlider horizenSlider = new JSlider();
+        //设置绘制刻度标签
+        verticalSlider.setPaintLabels(true);
+        Hashtable<Integer, Component> horizenLabelTable = new Hashtable<Integer, Component>();
+        horizenLabelTable.put(0, new JLabel("左边"));
+        horizenLabelTable.put(50, new JLabel("中间"));
+        horizenLabelTable.put(100, new JLabel("右边"));
+        horizenSlider.setLabelTable(horizenLabelTable);
+        operateHorizenRowPane.add(horizenTips);
+        operateHorizenRowPane.add(horizenSlider);
+
+        operatePane.add(operateVerticalRowPane,BorderLayout.NORTH);
+        operatePane.add(operateHorizenRowPane,BorderLayout.SOUTH);
+
+        textEditPanel.add(operatePane,BorderLayout.NORTH);
 
         /*用户输入表情包文字*/
         textPane = new JTextPane();
