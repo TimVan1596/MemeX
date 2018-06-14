@@ -1,4 +1,4 @@
-﻿package src.com.timvan.memexsql;
+package src.com.timvan.memexsql;
 
 /**
  * @author TimVan
@@ -16,11 +16,9 @@ import java.sql.*;
 public class JDBCUtil {
 
     private static  String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    
-    //抹去数据库信息
-    private static  String DB_URL =DB_URL;
-    private static  String USER = USER; 
-    private static  String PASS = PASS; 
+    private static  String DB_URL ="jdbc:mysql://120.79.210.170:3306/memex?serverTimezone=UTC";
+    private static  String USER = "memexuser";
+    private static  String PASS = "memexuser";
 
     //获取模板图片的信息
     public static Object[][] getPicsInfo() {

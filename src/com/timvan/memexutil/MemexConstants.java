@@ -15,7 +15,7 @@ public interface MemexConstants {
         public static final String SOFT_NAME_EN = "MemeX";
         public static final String versionInfo = "v0.5 预览版";
          public static final String releaseDate =
-                 "2018年6月14日21:45:37";
+                 "2018年06月15日00:56:59";
          public static final String authorName = "Tim Van";
 
     }
@@ -38,6 +38,14 @@ public interface MemexConstants {
         public static final String FINISH_STATUS_BAR_STRING
                 = "◆ 表情包已复制到剪切板，您可以直接粘贴；新图片保存在桌面";
 
+    }
+
+
+    /** 用户可以选择的字体大小
+     * */
+    class FontSizeString{
+        public static final String[] FONT_SIZE_STRING =
+            new String[]{"特小","小号","中号","大号","特大"};
     }
 
 }

@@ -208,14 +208,29 @@ public class ImageProcess {
     /** 将传入的字符串重绘图像，并输出图片文件
      * 返回图片文件的路径，返回“0”为错误
      * int Y ;输入字的垂直位置，从上到下0~100
+     * Color fontColor : 输出的字体颜色
+     *  int fontSize : 字体大小
      * */
+
+    /**
+     * DEFAULT_FONT_SIZE ： 默认字体大小
+     * WORD_WIDTH : 默认字体大小下文字的宽
+     * WORD_HEIGHT : 默认字体大小下文字的高
+     * */
+    private static final int DEFAULT_FONT_SIZE = 35;
+    private static final int WORD_WIDTH = 39;
+    private static final int WORD_HEIGHT = 45;
+
     public static String drawImg(String inputStr,
-                                 int WORDWIDTH,
-                                 int WORDHEIGHT,
                                  int Y,
+                                 int fontSize,
+                                 Color fontColor,
                                  File openFile) {
         //输入字的垂直位置的最大值
         final int MAX_Y = 100;
+        //改变传入字的大小
+        int WORDWIDTH  = (int)(WORD_WIDTH*((double)fontSize/DEFAULT_FONT_SIZE));
+        int WORDHEIGHT = (int)(WORD_HEIGHT*((double)fontSize/DEFAULT_FONT_SIZE));
 
         String newMemePath = "0";
         try {
@@ -246,7 +261,13 @@ public class ImageProcess {
 
 
             //bufferedImage = 创建新的BufferedImage，高度随文字的行数改变
-            BufferedImage bufferedImage = new BufferedImage(buffImg.getWidth(), buffImg.getHeight() + rowCount * WORDHEIGHT + 15, BufferedImage.TYPE_INT_RGB);
+            int newPicHeight = FIRST_ROW_Y+ rowCount * WORDHEIGHT-15;
+            if(newPicHeight <= buffImg.getHeight()){
+                //若第一行的位置比原图低，保持图片不变
+                newPicHeight = buffImg.getHeight();
+            }
+            BufferedImage bufferedImage = new BufferedImage(buffImg.getWidth(),
+                    newPicHeight, BufferedImage.TYPE_INT_RGB);
             //将扩增的部分用矩形填充为白色（默认为黑色）
             bufferedImage.getGraphics().fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
             bufferedImage.getGraphics().setColor(Color.white);
@@ -259,8 +280,8 @@ public class ImageProcess {
 
 
             //最后一个参数用来设置字体的大小
-            graphics.setColor(Color.BLACK);
-            graphics.setFont(new Font("黑体", Font.BOLD, 35));
+            graphics.setColor(fontColor);
+            graphics.setFont(new Font("黑体", Font.BOLD, fontSize));
 
 
             for (int i = 1; i <= rowCount; ++i) {

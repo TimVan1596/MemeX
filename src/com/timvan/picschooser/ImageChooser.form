@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="src.com.timvan.picschooser.ImageChooser">
   <grid id="27dc6" binding="panel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="815" height="462"/>
+      <xy x="20" y="20" width="882" height="440"/>
     </constraints>
     <properties/>
     <border type="none"/>

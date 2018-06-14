@@ -1,6 +1,5 @@
 package src;
 
-import src.com.timvan.memexsql.JDBCUtil;
 import src.com.timvan.picschooser.*;
 import src.com.timvan.memexsql.*;
 
@@ -17,6 +16,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import static src.com.timvan.memexutil.MemexConstants.FontSizeString.FONT_SIZE_STRING;
 import static src.com.timvan.memexutil.MemexConstants.RealeseInfos.*;
 import static src.com.timvan.memexutil.MemexConstants.StatusBarString.FINISH_STATUS_BAR_STRING;
 import static src.com.timvan.memexutil.MemexConstants.StatusBarString.INIT_STATUS_BAR_STRING;
@@ -64,8 +64,12 @@ public class MemeXPanel extends JPanel
     protected JMenuBar menuBar;
     /**
      * verticalSlider:文字位置垂直滑动条
+     * color : 用户选择的字体颜色
+     * fontSizeComboBox : 下拉菜单框
      * */
     private JSlider verticalSlider;
+    private Color color;
+    private JComboBox fontSizeComboBox;
 
 
     private void changePicByUrl(String url) {
@@ -86,7 +90,7 @@ public class MemeXPanel extends JPanel
 
     public MemeXPanel(JFrame frame) {
         super(new BorderLayout());
-
+        color = Color.BLACK;
 
         /*图片模块*/
         JPanel imgPanel = new JPanel();
@@ -251,14 +255,10 @@ public class MemeXPanel extends JPanel
                         Runtime.getRuntime().exec("cmd /c start explorer "
                                 + path + "\\MemeX表情包");
                     }
-
                 }
                 catch (IOException ie){
                     ie.printStackTrace();
                 }
-
-
-
             }
         });
         imgPopMenu.add(mShowInExplore);
@@ -392,17 +392,48 @@ public class MemeXPanel extends JPanel
         operateVerticalRowPane.add(verticalTips,BorderLayout.WEST);
         operateVerticalRowPane.add(verticalSlider,BorderLayout.CENTER);
 
-//        JLabel label=new JLabel("证件类型:");
-//        contentPane.add(label);
-//        JComboBox comboBox=new JComboBox();
-//        comboBox.addItem("身份证");
-//        comboBox.addItem("驾驶证");
-//        comboBox.addItem("军官证");
-//        contentPane.add(comboBox);
 
+        JPanel changeFontPanel = new JPanel(new FlowLayout());
+        // 创建一个标签, 用于显示选择的原色
+        final JLabel label = new JLabel();
+        label.setPreferredSize(new Dimension(30, 30));
+        label.setOpaque(true);
+        label.setBackground(Color.BLACK);
+        changeFontPanel.add(label);
+        JButton btn = new JButton("选择颜色");
+        btn.setFont(new Font("黑体", Font.PLAIN, 16));
+        btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 显示颜色选取器对话框, 返回选取的颜色（线程将被阻塞, 直到对话框被关闭）
+                color = JColorChooser.showDialog(frame, "选取颜色", color);
 
+                // 如果用户取消或关闭窗口, 则返回的 color 为 null
+                if (color == null) {
+                    return;
+                }
+                // 把选取的颜色设置为标签的背景
+                label.setBackground(color);
+
+            }
+        });
+        changeFontPanel.add(btn);
+
+        JLabel comboJLabel  = new JLabel("   字体：");
+        comboJLabel.setFont(new Font("黑体", Font.BOLD, 16));
+
+        changeFontPanel.add(comboJLabel);
+        fontSizeComboBox=new JComboBox();
+        fontSizeComboBox.addItem(FONT_SIZE_STRING[0]);
+        fontSizeComboBox.addItem(FONT_SIZE_STRING[1]);
+        fontSizeComboBox.addItem(FONT_SIZE_STRING[2]);
+        fontSizeComboBox.addItem(FONT_SIZE_STRING[3]);
+        fontSizeComboBox.addItem(FONT_SIZE_STRING[4]);
+        fontSizeComboBox.setSelectedItem(FONT_SIZE_STRING[2]);
+        changeFontPanel.add(fontSizeComboBox);
 
         operatePane.add(operateVerticalRowPane,BorderLayout.NORTH);
+        operatePane.add(changeFontPanel,BorderLayout.SOUTH);
 
         textEditPanel.add(operatePane,BorderLayout.NORTH);
 
@@ -479,10 +510,33 @@ public class MemeXPanel extends JPanel
      * 生成图片事件
      */
     private void summitCommend() {
+        //获取用户输入的值
         String text = textPane.getText();
+        //获取用户选择的字体大小
+        String fontSizeString = (String)fontSizeComboBox.getSelectedItem();
+        int fontSize = 35;
+
+        //{"特小","小号","中号","大号","特大"};
+        if (fontSizeString.equals(FONT_SIZE_STRING[0])){
+            fontSize = 15;
+        }
+        else if (fontSizeString.equals(FONT_SIZE_STRING[1])){
+            fontSize = 25;
+        }
+        else if (fontSizeString.equals(FONT_SIZE_STRING[2])){
+            fontSize = 35;
+        }
+        else if (fontSizeString.equals(FONT_SIZE_STRING[3])){
+            fontSize = 50;
+        }
+        else if (fontSizeString.equals(FONT_SIZE_STRING[4])){
+            fontSize = 65;
+        }
+
         String newMemePath = ImageProcess.drawImg(text,
-                WORD_WIDTH, WORD_HEIGHT,
                 verticalSlider.getValue(),
+                fontSize,
+                color,
                 openFile);
         //打开错误值
         final String WRONG_PATH = "0";

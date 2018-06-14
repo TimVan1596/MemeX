@@ -87,8 +87,8 @@ public class InfoMysql {
     /**
      *设置JTable的列名
      */
-    private String[] columnNames = {"图号", "名称", "预览图"
-            , "下载量","UP主"};
+    private String[] columnNames = {"图号", "内容", "预览图"
+            , "排名","UP主"};
 
     public enum ColumnIndex {
         id(0), name(1), pic(2), times(3),author(4),preview(5);
