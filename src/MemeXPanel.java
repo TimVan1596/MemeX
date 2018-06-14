@@ -27,13 +27,8 @@ import static src.com.timvan.picschooser.ImageProcess.isLinux;
  * 作为主界面MemeX的主面板方法，各控件在此绘制
  * @author TimVan
  */
-public class MemexPanel extends JPanel
+public class MemeXPanel extends JPanel
         implements ActionListener {
-
-    /**
-     * versionInfo 当前版本号
-     * releaseDate  发布日期
-     */
 
     /**
      * textPane 用户输入的表情包文字
@@ -50,8 +45,8 @@ public class MemexPanel extends JPanel
     private static final int IMG_WIDTH = 400;
 
     //缩放图片的尺寸
-    int scaleWidth = 0;
-    int scaleHeight = 0;
+    private int scaleWidth = 0;
+    private int scaleHeight = 0;
 
 
     private JTextPane textPane;
@@ -67,6 +62,10 @@ public class MemexPanel extends JPanel
     private JMenuItem mCopy, mChange, mStore;
     //创建一个菜单栏
     protected JMenuBar menuBar;
+    /**
+     * verticalSlider:文字位置垂直滑动条
+     * */
+    private JSlider verticalSlider;
 
 
     private void changePicByUrl(String url) {
@@ -85,7 +84,7 @@ public class MemexPanel extends JPanel
         imgLabel.setIcon(image);
     }
 
-    public MemexPanel(JFrame frame) {
+    public MemeXPanel(JFrame frame) {
         super(new BorderLayout());
 
 
@@ -152,7 +151,7 @@ public class MemexPanel extends JPanel
                                 " - " + SOFT_NAME_CN + "\n"
                                 + "版本号: "
                                 + versionInfo + "\n" +
-                                "发布时间: d"
+                                "发布时间: "
                                 + releaseDate + "\n" +
                                 "开发团队：我在芜湖玩Java\n\n"
                         +"本页面的软件遵照GPL-3.0协议开放源代码\n"
@@ -163,8 +162,6 @@ public class MemexPanel extends JPanel
 
         settingMenu.add(helpMenu);
         settingMenu.add(aboutMenu);
-
-
 
         /*点击表情包商店*/
         JButton storeBTN = new JButton("打开表情包商店");
@@ -239,7 +236,7 @@ public class MemexPanel extends JPanel
                 File dirFile = new File(path + "/MemeX表情包");
                 //无则创建
                 boolean bFile = dirFile.exists();
-                if (bFile == false) {
+                if (!bFile) {
                     dirFile.mkdir();
                 }
 
@@ -376,39 +373,36 @@ public class MemexPanel extends JPanel
 
         //具体操作区，如调整文字位置，颜色，大小
         JPanel operatePane = new JPanel(new BorderLayout());
-        JButton jButton = new JButton("hello");
 
+        //-----------添加文字位置垂直滑动条-----------
 
-        //-----------添加文字位置垂直的滑动条-----------
-        JPanel operateVerticalRowPane = new JPanel(new FlowLayout());
-        JLabel verticalTips = new JLabel("上下:");
-        JSlider verticalSlider = new JSlider();
+        JPanel operateVerticalRowPane = new JPanel(new BorderLayout());
+        JLabel verticalTips = new JLabel("  位 置  ");
+        verticalSlider = new JSlider(JSlider.HORIZONTAL);
         //设置绘制刻度标签
         verticalSlider.setPaintLabels(true);
+        verticalSlider.setMaximum(100);
         Hashtable<Integer, Component> verticalLabelTable = new Hashtable<Integer, Component>();
-        verticalLabelTable.put(0, new JLabel("最上"));
-        verticalLabelTable.put(50, new JLabel("中间"));
-        verticalLabelTable.put(100, new JLabel("最下"));
+        verticalLabelTable.put(0, new JLabel("上"));
+        verticalLabelTable.put(50, new JLabel("中"));
+        verticalLabelTable.put(100, new JLabel("下"));
         verticalSlider.setLabelTable(verticalLabelTable);
-        operateVerticalRowPane.add(verticalTips);
-        operateVerticalRowPane.add(verticalSlider);
+        verticalSlider.setValue(100);
+        verticalTips.setFont(new Font("黑体", Font.PLAIN, 18));
+        operateVerticalRowPane.add(verticalTips,BorderLayout.WEST);
+        operateVerticalRowPane.add(verticalSlider,BorderLayout.CENTER);
 
-        //-----------添加文字位置垂直的滑动条-----------
-        JPanel operateHorizenRowPane = new JPanel(new FlowLayout());
-        JLabel horizenTips = new JLabel("左右:");
-        JSlider horizenSlider = new JSlider();
-        //设置绘制刻度标签
-        verticalSlider.setPaintLabels(true);
-        Hashtable<Integer, Component> horizenLabelTable = new Hashtable<Integer, Component>();
-        horizenLabelTable.put(0, new JLabel("左边"));
-        horizenLabelTable.put(50, new JLabel("中间"));
-        horizenLabelTable.put(100, new JLabel("右边"));
-        horizenSlider.setLabelTable(horizenLabelTable);
-        operateHorizenRowPane.add(horizenTips);
-        operateHorizenRowPane.add(horizenSlider);
+//        JLabel label=new JLabel("证件类型:");
+//        contentPane.add(label);
+//        JComboBox comboBox=new JComboBox();
+//        comboBox.addItem("身份证");
+//        comboBox.addItem("驾驶证");
+//        comboBox.addItem("军官证");
+//        contentPane.add(comboBox);
+
+
 
         operatePane.add(operateVerticalRowPane,BorderLayout.NORTH);
-        operatePane.add(operateHorizenRowPane,BorderLayout.SOUTH);
 
         textEditPanel.add(operatePane,BorderLayout.NORTH);
 
@@ -486,7 +480,10 @@ public class MemexPanel extends JPanel
      */
     private void summitCommend() {
         String text = textPane.getText();
-        String newMemePath = ImageProcess.drawImg(text, WORD_WIDTH, WORD_HEIGHT, openFile);
+        String newMemePath = ImageProcess.drawImg(text,
+                WORD_WIDTH, WORD_HEIGHT,
+                verticalSlider.getValue(),
+                openFile);
         //打开错误值
         final String WRONG_PATH = "0";
         if (!newMemePath.equals(WRONG_PATH)) {
@@ -497,8 +494,8 @@ public class MemexPanel extends JPanel
             scaleWidth = imgWidthAndHeight.get("width");
             scaleHeight = imgWidthAndHeight.get("height");
 
-            System.out.println("scaleWidth = " + scaleWidth);
-            System.out.println("scaleHeight = " + scaleHeight);
+//            System.out.println("scaleWidth = " + scaleWidth);
+//            System.out.println("scaleHeight = " + scaleHeight);
 
             image = new ImageIcon(image.getImage().getScaledInstance(
                     scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
@@ -535,7 +532,8 @@ public class MemexPanel extends JPanel
         }
     }
 
-    //打开表情模板选择器
+    /**打开表情模板选择器
+     * */
     private void picsChooser() {
 
 
@@ -624,6 +622,4 @@ public class MemexPanel extends JPanel
         frame.setIconImage(image);
         frame.setVisible(true);
     }
-
-
 }

@@ -22,12 +22,12 @@ public class MemeX {
                 " - " + SOFT_NAME_EN +"     "
                 + MemexConstants.RealeseInfos.versionInfo);
         //Create and set up the content pane.
-        MemexPanel memexPanel = new MemexPanel(frame);
+        MemeXPanel memeXPanel = new MemeXPanel(frame);
 
         /**/
 
 
-        JComponent newContentPane = memexPanel;
+        JComponent newContentPane = memeXPanel;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         newContentPane.setOpaque(true);
         frame.setContentPane(newContentPane);

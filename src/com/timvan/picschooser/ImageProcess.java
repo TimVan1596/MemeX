@@ -40,7 +40,10 @@ public class ImageProcess {
      * ImageIcon image为显示的图片
      * int conWidth,int conHeight 分别是图片的长和宽
      */
-    public static Map<String, Integer> scaleImage(ImageIcon image, double conWidth, double conHeight) {
+    public static Map<String, Integer> scaleImage(
+            ImageIcon image,
+            double conWidth,
+            double conHeight ) {
 
         Map<String, Integer> imgWidthAndHeight = new HashMap<String, Integer>();
 
@@ -175,7 +178,8 @@ public class ImageProcess {
         return address;
     }
 
-    //复制图片到剪切板
+    /**复制图片到剪切板
+     * */
     public static void CopyToClipboard(final Image image) {
         Transferable trans = new Transferable() {
             @Override
@@ -203,20 +207,36 @@ public class ImageProcess {
     @SuppressWarnings("AlibabaLowerCamelCaseVariableNaming")
     /** 将传入的字符串重绘图像，并输出图片文件
      * 返回图片文件的路径，返回“0”为错误
+     * int Y ;输入字的垂直位置，从上到下0~100
      * */
-    public static String drawImg(String inputStr, int WORD_WIDTH, int WORD_HEIGHT, File openFile) {
+    public static String drawImg(String inputStr,
+                                 int WORDWIDTH,
+                                 int WORDHEIGHT,
+                                 int Y,
+                                 File openFile) {
+        //输入字的垂直位置的最大值
+        final int MAX_Y = 100;
+
         String newMemePath = "0";
         try {
             //读入表情包图片
             InputStream is = new FileInputStream(openFile.getAbsolutePath());
-            System.out.println(openFile.getName());
+            //System.out.println(openFile.getName());
             //读入图片
             BufferedImage buffImg = ImageIO.read(is);
 
-            final int FIRST_ROW_Y = buffImg.getHeight() + WORD_HEIGHT - 5;
+            int FIRST_ROW_Y = buffImg.getHeight();
+            //改变第一行的位置
+            double scaleRateY = (double)Y/MAX_Y;
+            FIRST_ROW_Y = (int)(FIRST_ROW_Y*scaleRateY);
+            FIRST_ROW_Y += WORDHEIGHT - 5;
+
+            System.out.println("总高度："+buffImg.getHeight());
+            System.out.println("第一行高度："+FIRST_ROW_Y);
+
             int imageWidth = buffImg.getWidth();
             //maxWordNums 每行最多多少字
-            final int maxWordNums = imageWidth / WORD_WIDTH;
+            final int maxWordNums = imageWidth / WORDWIDTH;
             //输入的字符总长度
             int strLenth = inputStr.length();
             //将会有几行
@@ -226,7 +246,7 @@ public class ImageProcess {
 
 
             //bufferedImage = 创建新的BufferedImage，高度随文字的行数改变
-            BufferedImage bufferedImage = new BufferedImage(buffImg.getWidth(), buffImg.getHeight() + rowCount * WORD_HEIGHT + 15, BufferedImage.TYPE_INT_RGB);
+            BufferedImage bufferedImage = new BufferedImage(buffImg.getWidth(), buffImg.getHeight() + rowCount * WORDHEIGHT + 15, BufferedImage.TYPE_INT_RGB);
             //将扩增的部分用矩形填充为白色（默认为黑色）
             bufferedImage.getGraphics().fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
             bufferedImage.getGraphics().setColor(Color.white);
@@ -261,8 +281,8 @@ public class ImageProcess {
                     stringBuffer.append(cacheChar);
                 }
                 everyRowStr = stringBuffer.toString();
-                x = (imageWidth - WORD_WIDTH * (everyRowStr.length())) / 2;
-                y = FIRST_ROW_Y + (i - 1) * WORD_HEIGHT;
+                x = (imageWidth - WORDWIDTH * (everyRowStr.length())) / 2;
+                y = FIRST_ROW_Y + (i - 1) * WORDHEIGHT;
 
                 if (i == 1) {
                     //将第一行作为标题
