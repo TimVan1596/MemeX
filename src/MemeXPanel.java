@@ -25,6 +25,7 @@ import static src.com.timvan.picschooser.ImageProcess.isLinux;
 
 /**
  * 作为主界面MemeX的主面板方法，各控件在此绘制
+ *
  * @author TimVan
  */
 public class MemeXPanel extends JPanel
@@ -66,7 +67,7 @@ public class MemeXPanel extends JPanel
      * verticalSlider:文字位置垂直滑动条
      * color : 用户选择的字体颜色
      * fontSizeComboBox : 下拉菜单框
-     * */
+     */
     private JSlider verticalSlider;
     private Color color;
     private JComboBox fontSizeComboBox;
@@ -120,14 +121,14 @@ public class MemeXPanel extends JPanel
                  * 若没有其他依赖，则filePath的结果应当是该可运行jar包的绝对路径，
                  * 此时我们只需要经过字符串解析，便可得到jar所在目录
                  */
-                if(filePath.contains(pathSplit)){
-                    filePath = filePath.substring(0,filePath.indexOf(pathSplit));
-                }else if (filePath.endsWith(".jar")) {
+                if (filePath.contains(pathSplit)) {
+                    filePath = filePath.substring(0, filePath.indexOf(pathSplit));
+                } else if (filePath.endsWith(".jar")) {
                     //截取路径中的jar包名,可执行jar包运行的结果里包含".jar"
                     filePath = filePath.substring(0, filePath.lastIndexOf(File.separator) + 1);
                 }
 
-                String path =filePath+"/使用教程.png";
+                String path = filePath + "/使用教程.png";
 
                 try {
                     //打开“帮助教程”图片
@@ -136,10 +137,9 @@ public class MemeXPanel extends JPanel
                                 + path);
                     } else {
                         System.out.println(path);
-                        Runtime.getRuntime().exec("cmd /c "+path);
+                        Runtime.getRuntime().exec("cmd /c " + path);
                     }
-                }
-                catch (IOException ie){
+                } catch (IOException ie) {
                     ie.printStackTrace();
                 }
 
@@ -151,15 +151,16 @@ public class MemeXPanel extends JPanel
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(frame,
                         "                              "
-                                +SOFT_NAME_EN+
+                                + SOFT_NAME_EN +
                                 " - " + SOFT_NAME_CN + "\n"
                                 + "版本号: "
                                 + versionInfo + "\n" +
                                 "发布时间: "
-                                + releaseDate + "\n" +
-                                "开发团队：我在芜湖玩Java\n\n"
-                        +"本页面的软件遵照GPL-3.0协议开放源代码\n"
-                        +"GitHub 地址 ：https://github.com/TimVan1596/MemeX\n",
+                                + releaseDate + "\n"
+                                +"开发者：" + authorName + "\n"
+                                + "协助团队：" + teamName + "\n\n"
+                                + "本页面的软件遵照GPL-3.0协议开放源代码\n"
+                                + "GitHub 地址 ：https://github.com/TimVan1596/MemeX\n",
                         "关于", JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -245,7 +246,7 @@ public class MemeXPanel extends JPanel
                 }
 
 
-                try{
+                try {
                     //打开产生图片的文件夹，判断是否是Linux
                     if (isLinux()) {
                         Runtime.getRuntime().exec("sh nautilus "
@@ -255,8 +256,7 @@ public class MemeXPanel extends JPanel
                         Runtime.getRuntime().exec("cmd /c start explorer "
                                 + path + "\\MemeX表情包");
                     }
-                }
-                catch (IOException ie){
+                } catch (IOException ie) {
                     ie.printStackTrace();
                 }
             }
@@ -302,7 +302,7 @@ public class MemeXPanel extends JPanel
                 File com = fsv.getHomeDirectory();
                 String path = com.getPath();
                 //更改最终返回的表情路径
-                try{
+                try {
                     //打开产生图片的文件夹，判断是否是Linux
                     if (isLinux()) {
                         Runtime.getRuntime().exec("sh nautilus "
@@ -312,14 +312,9 @@ public class MemeXPanel extends JPanel
                         Runtime.getRuntime().exec("cmd /c start explorer "
                                 + path + "\\MemeX表情包");
                     }
-
-                }
-                catch (IOException ie){
+                } catch (IOException ie) {
                     ie.printStackTrace();
                 }
-
-
-
             }
         });
 
@@ -333,12 +328,9 @@ public class MemeXPanel extends JPanel
         imgLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getButton() == MouseEvent.BUTTON1)
-                {
+                if (e.getButton() == MouseEvent.BUTTON1) {
                     changePic();
-                }
-                else if(e.getButton() == MouseEvent.BUTTON3)
-                {
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
                     imgPopMenu.show(imgLabel, e.getX(), e.getY());
                 }
             }
@@ -389,8 +381,8 @@ public class MemeXPanel extends JPanel
         verticalSlider.setLabelTable(verticalLabelTable);
         verticalSlider.setValue(100);
         verticalTips.setFont(new Font("黑体", Font.PLAIN, 18));
-        operateVerticalRowPane.add(verticalTips,BorderLayout.WEST);
-        operateVerticalRowPane.add(verticalSlider,BorderLayout.CENTER);
+        operateVerticalRowPane.add(verticalTips, BorderLayout.WEST);
+        operateVerticalRowPane.add(verticalSlider, BorderLayout.CENTER);
 
 
         JPanel changeFontPanel = new JPanel(new FlowLayout());
@@ -419,11 +411,11 @@ public class MemeXPanel extends JPanel
         });
         changeFontPanel.add(btn);
 
-        JLabel comboJLabel  = new JLabel("   字体：");
+        JLabel comboJLabel = new JLabel("   字体：");
         comboJLabel.setFont(new Font("黑体", Font.BOLD, 16));
 
         changeFontPanel.add(comboJLabel);
-        fontSizeComboBox=new JComboBox();
+        fontSizeComboBox = new JComboBox();
         fontSizeComboBox.addItem(FONT_SIZE_STRING[0]);
         fontSizeComboBox.addItem(FONT_SIZE_STRING[1]);
         fontSizeComboBox.addItem(FONT_SIZE_STRING[2]);
@@ -432,10 +424,10 @@ public class MemeXPanel extends JPanel
         fontSizeComboBox.setSelectedItem(FONT_SIZE_STRING[2]);
         changeFontPanel.add(fontSizeComboBox);
 
-        operatePane.add(operateVerticalRowPane,BorderLayout.NORTH);
-        operatePane.add(changeFontPanel,BorderLayout.SOUTH);
+        operatePane.add(operateVerticalRowPane, BorderLayout.NORTH);
+        operatePane.add(changeFontPanel, BorderLayout.SOUTH);
 
-        textEditPanel.add(operatePane,BorderLayout.NORTH);
+        textEditPanel.add(operatePane, BorderLayout.NORTH);
 
         /*用户输入表情包文字*/
         textPane = new JTextPane();
@@ -513,23 +505,19 @@ public class MemeXPanel extends JPanel
         //获取用户输入的值
         String text = textPane.getText();
         //获取用户选择的字体大小
-        String fontSizeString = (String)fontSizeComboBox.getSelectedItem();
+        String fontSizeString = (String) fontSizeComboBox.getSelectedItem();
         int fontSize = 35;
 
         //{"特小","小号","中号","大号","特大"};
-        if (fontSizeString.equals(FONT_SIZE_STRING[0])){
+        if (fontSizeString.equals(FONT_SIZE_STRING[0])) {
             fontSize = 15;
-        }
-        else if (fontSizeString.equals(FONT_SIZE_STRING[1])){
+        } else if (fontSizeString.equals(FONT_SIZE_STRING[1])) {
             fontSize = 25;
-        }
-        else if (fontSizeString.equals(FONT_SIZE_STRING[2])){
+        } else if (fontSizeString.equals(FONT_SIZE_STRING[2])) {
             fontSize = 35;
-        }
-        else if (fontSizeString.equals(FONT_SIZE_STRING[3])){
+        } else if (fontSizeString.equals(FONT_SIZE_STRING[3])) {
             fontSize = 50;
-        }
-        else if (fontSizeString.equals(FONT_SIZE_STRING[4])){
+        } else if (fontSizeString.equals(FONT_SIZE_STRING[4])) {
             fontSize = 65;
         }
 
@@ -548,8 +536,8 @@ public class MemeXPanel extends JPanel
             scaleWidth = imgWidthAndHeight.get("width");
             scaleHeight = imgWidthAndHeight.get("height");
 
-//            System.out.println("scaleWidth = " + scaleWidth);
-//            System.out.println("scaleHeight = " + scaleHeight);
+            System.out.println("scaleWidth = " + scaleWidth);
+            System.out.println("scaleHeight = " + scaleHeight);
 
             image = new ImageIcon(image.getImage().getScaledInstance(
                     scaleWidth, scaleHeight, Image.SCALE_DEFAULT));
@@ -586,8 +574,9 @@ public class MemeXPanel extends JPanel
         }
     }
 
-    /**打开表情模板选择器
-     * */
+    /**
+     * 打开表情模板选择器
+     */
     private void picsChooser() {
 
 
@@ -634,8 +623,8 @@ public class MemeXPanel extends JPanel
                         getValueAt(row, column);
                 column = 1;
                 //获取到的表情包名称（PlaceHolder）
-                String placeHolder = (String)imageTable.
-                        getValueAt(row,column);
+                String placeHolder = (String) imageTable.
+                        getValueAt(row, column);
                 textPane.setText(placeHolder);
 
                 Thread thread = new Thread(new Runnable() {
